@@ -1,0 +1,227 @@
+2018-06-06T00:44:47.278Z - normal: Load ~/.CocosCreator/settings.json
+2018-06-06T00:44:47.281Z - normal: checking language setting...
+2018-06-06T00:44:47.281Z - normal: Language: zh
+2018-06-06T00:44:53.059Z - success: protocol editor-framework registered
+2018-06-06T00:44:53.059Z - success: protocol app registered
+2018-06-06T00:44:53.059Z - success: protocol theme registered
+2018-06-06T00:44:53.059Z - success: protocol packages registered
+2018-06-06T00:44:53.059Z - success: protocol unpack registerred
+2018-06-06T00:44:53.059Z - success: protocol disable-commonjs registerred
+2018-06-06T00:44:53.215Z - normal: connected!
+2018-06-06T00:44:53.216Z - normal: Check project /Users/huge/Documents/study/creater/work/six2048
+2018-06-06T00:44:53.217Z - normal: Initializing Cocos2d
+2018-06-06T00:44:53.820Z - normal: Initializing Asset Database
+2018-06-06T00:44:53.926Z - success: protocol uuid registerred
+2018-06-06T00:44:53.927Z - success: protocol db registerred
+2018-06-06T00:44:53.927Z - success: protocol thumbnail registerred
+2018-06-06T00:44:53.927Z - normal: Loading editor/builtin packages
+2018-06-06T00:44:54.059Z - success: anysdk loaded
+2018-06-06T00:44:54.290Z - success: assets loaded
+2018-06-06T00:44:54.293Z - success: builder loaded
+2018-06-06T00:44:54.295Z - success: cocos-analytics loaded
+2018-06-06T00:44:54.317Z - success: console loaded
+2018-06-06T00:44:54.369Z - success: fb-instant-games loaded
+2018-06-06T00:44:54.374Z - success: hierarchy loaded
+2018-06-06T00:44:54.378Z - success: inspector loaded
+2018-06-06T00:44:54.380Z - success: keystore loaded
+2018-06-06T00:44:54.386Z - success: node-library loaded
+2018-06-06T00:44:54.388Z - success: package-asset loaded
+2018-06-06T00:44:54.390Z - success: preferences loaded
+2018-06-06T00:44:54.392Z - success: project-exporter loaded
+2018-06-06T00:44:54.406Z - success: project-importer loaded
+2018-06-06T00:44:54.409Z - success: project-settings loaded
+2018-06-06T00:44:54.422Z - success: ui-kit loaded
+2018-06-06T00:44:54.434Z - success: ui-grid loaded
+2018-06-06T00:44:54.438Z - success: scene loaded
+2018-06-06T00:44:54.439Z - success: sprite-editor loaded
+2018-06-06T00:44:54.443Z - success: store loaded
+2018-06-06T00:44:54.448Z - success: timeline loaded
+2018-06-06T00:44:54.448Z - normal: Loading builtin packages
+2018-06-06T00:44:54.464Z - success: asset-db-debugger loaded
+2018-06-06T00:44:54.464Z - success: color-picker loaded
+2018-06-06T00:44:54.468Z - success: package-manager loaded
+2018-06-06T00:44:54.519Z - success: sdkbox loaded
+2018-06-06T00:44:54.525Z - success: tester loaded
+2018-06-06T00:44:54.528Z - success: ui-kit-preview-extra loaded
+2018-06-06T00:44:54.530Z - success: ui-kit-preview loaded
+2018-06-06T00:44:54.550Z - success: ui-tree loaded
+2018-06-06T00:44:56.227Z - normal: Initializing project /Users/huge/Documents/study/creater/work/six2048
+2018-06-06T00:44:56.252Z - normal: Loading packages
+2018-06-06T00:44:56.255Z - normal: Watching packages
+2018-06-06T00:44:56.264Z - normal: Run Application
+2018-06-06T00:44:59.367Z - success: preview server running at http://localhost:7456
+2018-06-06T00:45:10.339Z - normal: 1.9.1
+2018-06-06T03:14:03.697Z - warn: Error: ipc timeout. message: scene:query-node, session: scene@renderer:51825
+2018-06-06T03:14:03.727Z - warn: Error: ipc timeout. message: scene:query-node, session: scene@renderer:51828
+2018-06-06T03:14:03.729Z - warn: Error: ipc timeout. message: scene:query-node, session: scene@renderer:51830
+2018-06-06T03:28:58.535Z - failed: [db-task][sync-changes] Failed to import asset /Users/huge/Documents/study/creater/work/six2048/assets/script/scenes/LoadingScene.js, message: Compile error: SyntaxError: /Users/huge/Documents/study/creater/work/six2048/assets/script/scenes/LoadingScene.js: Unexpected token, expected ; (29:20)
+  27 |         // 加载目录下所有资源
+  28 |         var count = 0;
+> 29 |         for (valetr i = 0; i < resList.length; i++) {
+     |                     ^
+  30 |             let dirName = resList[i];
+  31 |             cc.loader.loadResDir(resList[i], function (i, err, assets) {
+  32 |                 cc.myAssets[resList[i]] = assets;
+    at Parser.pp$5.raise (/Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/babylon/lib/index.js:4454:13)
+    at Parser.pp.unexpected (/Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/babylon/lib/index.js:1761:8)
+    at Parser.pp.expect (/Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/babylon/lib/index.js:1749:33)
+    at Parser.pp$1.parseFor (/Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/babylon/lib/index.js:2301:8)
+    at Parser.pp$1.parseForStatement (/Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/babylon/lib/index.js:2048:15)
+    at Parser.pp$1.parseStatement (/Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/babylon/lib/index.js:1836:19)
+    at Parser.pp$1.parseBlockBody (/Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/babylon/lib/index.js:2268:21)
+    at Parser.pp$1.parseBlock (/Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/babylon/lib/index.js:2247:8)
+    at Parser.pp$3.parseFunctionBody (/Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/babylon/lib/index.js:4235:22)
+    at Parser.pp$3.parseMethod (/Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/babylon/lib/index.js:4180:8)
+2018-06-06T03:37:53.384Z - warn: Script attached to "backtBtn" in prefab "loseEffect.prefab" is missing or invalid. Detailed information:
+Node path: "blackBG/backtBtn"
+Asset url: "db://assets/resources/prefabs/loseEffect.prefab"
+Script UUID: "c2d5b548-ebb6-4f02-af14-e635e5986c02"
+Class ID: "c2d5bVI67ZPAq8U5jXlmGwC"
+
+2018-06-06T03:37:53.443Z - warn: Script attached to "backtBtn" in prefab "loseEffect.prefab" is missing or invalid. Detailed information:
+Node path: "blackBG/backtBtn"
+Asset url: "db://assets/resources/prefabs/loseEffect.prefab"
+Script UUID: "3c5e9158-1c3f-4bc5-9599-dfdb9d4059e2"
+Class ID: "3c5e9FYHD9LxZWZ39udQFni"
+
+2018-06-06T03:40:30.897Z - warn: Script attached to "startBtn" in scene "startScene.fire" is missing or invalid. Detailed information:
+Node path: "Canvas/startBtn"
+Asset url: "db://assets/views/startScene.fire"
+Script UUID: "c2d5b548-ebb6-4f02-af14-e635e5986c02"
+Class ID: "c2d5bVI67ZPAq8U5jXlmGwC"
+
+2018-06-06T03:51:19.459Z - warn: Script attached to "backtBtn" in prefab "loseEffect.prefab" is missing or invalid. Detailed information:
+Node path: "blackBG/backtBtn"
+Asset url: "db://assets/resources/prefabs/loseEffect.prefab"
+Script UUID: "c2d5b548-ebb6-4f02-af14-e635e5986c02"
+Class ID: "c2d5bVI67ZPAq8U5jXlmGwC"
+
+2018-06-06T03:51:19.502Z - warn: Script attached to "backtBtn" in prefab "loseEffect.prefab" is missing or invalid. Detailed information:
+Node path: "blackBG/backtBtn"
+Asset url: "db://assets/resources/prefabs/loseEffect.prefab"
+Script UUID: "3c5e9158-1c3f-4bc5-9599-dfdb9d4059e2"
+Class ID: "3c5e9FYHD9LxZWZ39udQFni"
+
+2018-06-06T03:54:24.003Z - warn: Script attached to "backtBtn" in prefab "loseEffect.prefab" is missing or invalid. Detailed information:
+Node path: "blackBG/backtBtn"
+Asset url: "db://assets/resources/prefabs/loseEffect.prefab"
+Script UUID: "c2d5b548-ebb6-4f02-af14-e635e5986c02"
+Class ID: "c2d5bVI67ZPAq8U5jXlmGwC"
+
+2018-06-06T03:54:24.079Z - warn: Script attached to "backtBtn" in prefab "loseEffect.prefab" is missing or invalid. Detailed information:
+Node path: "blackBG/backtBtn"
+Asset url: "db://assets/resources/prefabs/loseEffect.prefab"
+Script UUID: "3c5e9158-1c3f-4bc5-9599-dfdb9d4059e2"
+Class ID: "3c5e9FYHD9LxZWZ39udQFni"
+
+2018-06-06T03:54:46.930Z - error: TypeError: Cannot read property 'length' of undefined
+    at HTMLElement._patchAt (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:13103)
+    at HTMLElement._patchAt (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:13571)
+    at HTMLElement._patchAt (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:13571)
+    at HTMLElement._patchAt (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:13571)
+    at HTMLElement._patchAt (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:13508)
+    at HTMLElement._applyPatch (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:12164)
+    at HTMLElement._handleQueryNode (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:11116)
+    at Async.map (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:10815)
+    at /Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/async/lib/async.js:52:16
+    at /Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/async/lib/async.js:361:13
+2018-06-06T03:54:54.254Z - warn: Script attached to "backtBtn" in prefab "loseEffect.prefab" is missing or invalid. Detailed information:
+Node path: "blackBG/backtBtn"
+Asset url: "db://assets/resources/prefabs/loseEffect.prefab"
+Script UUID: "c2d5b548-ebb6-4f02-af14-e635e5986c02"
+Class ID: "c2d5bVI67ZPAq8U5jXlmGwC"
+
+2018-06-06T03:54:54.255Z - warn: Script attached to "backtBtn" in prefab "loseEffect.prefab" is missing or invalid. Detailed information:
+Node path: "blackBG/backtBtn"
+Asset url: "db://assets/resources/prefabs/loseEffect.prefab"
+Script UUID: "3c5e9158-1c3f-4bc5-9599-dfdb9d4059e2"
+Class ID: "3c5e9FYHD9LxZWZ39udQFni"
+
+2018-06-06T03:54:59.843Z - error: TypeError: Cannot read property 'length' of undefined
+    at HTMLElement._patchAt (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:13103)
+    at HTMLElement._patchAt (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:13571)
+    at HTMLElement._patchAt (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:13571)
+    at HTMLElement._patchAt (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:13571)
+    at HTMLElement._patchAt (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:13508)
+    at HTMLElement._applyPatch (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:12164)
+    at HTMLElement._handleQueryNode (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:11116)
+    at Async.map (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:10815)
+    at /Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/async/lib/async.js:52:16
+    at /Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/async/lib/async.js:361:13
+2018-06-06T03:55:49.740Z - error: TypeError: Cannot read property 'length' of undefined
+    at HTMLElement._patchAt (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:13103)
+    at HTMLElement._patchAt (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:13571)
+    at HTMLElement._patchAt (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:13571)
+    at HTMLElement._patchAt (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:13571)
+    at HTMLElement._patchAt (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:13508)
+    at HTMLElement._applyPatch (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:12164)
+    at HTMLElement._handleQueryNode (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:11116)
+    at Async.map (/Applications/CocosCreator.app/Contents/Resources/app.asar/editor/builtin/inspector/panel/index.js:1:10815)
+    at /Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/async/lib/async.js:52:16
+    at /Applications/CocosCreator.app/Contents/Resources/app.asar/node_modules/async/lib/async.js:361:13
+2018-06-06T03:57:52.824Z - warn: Script attached to "backtBtn" in prefab "loseEffect.prefab" is missing or invalid. Detailed information:
+Node path: "blackBG/backtBtn"
+Asset url: "db://assets/resources/prefabs/loseEffect.prefab"
+Script UUID: "c2d5b548-ebb6-4f02-af14-e635e5986c02"
+Class ID: "c2d5bVI67ZPAq8U5jXlmGwC"
+
+2018-06-06T03:57:52.868Z - warn: Script attached to "backtBtn" in prefab "loseEffect.prefab" is missing or invalid. Detailed information:
+Node path: "blackBG/backtBtn"
+Asset url: "db://assets/resources/prefabs/loseEffect.prefab"
+Script UUID: "3c5e9158-1c3f-4bc5-9599-dfdb9d4059e2"
+Class ID: "3c5e9FYHD9LxZWZ39udQFni"
+
+2018-06-06T03:58:02.677Z - warn: Script attached to "score" is missing or invalid. Detailed information:
+Node path: "Canvas/score"
+Script UUID: "0f727455-7f36-481d-981e-905e40da6212"
+Class ID: "0f727RVfzZIHZgekF5A2mIS"
+
+2018-06-06T03:58:02.678Z - warn: Script attached to "highScore" is missing or invalid. Detailed information:
+Node path: "Canvas/highScore"
+Script UUID: "0f727455-7f36-481d-981e-905e40da6212"
+Class ID: "0f727RVfzZIHZgekF5A2mIS"
+
+2018-06-06T03:58:08.411Z - warn: Script attached to "score" is missing or invalid. Detailed information:
+Node path: "Canvas/score"
+Script UUID: "0f727455-7f36-481d-981e-905e40da6212"
+Class ID: "0f727RVfzZIHZgekF5A2mIS"
+
+2018-06-06T03:58:08.424Z - warn: Script attached to "highScore" is missing or invalid. Detailed information:
+Node path: "Canvas/highScore"
+Script UUID: "0f727455-7f36-481d-981e-905e40da6212"
+Class ID: "0f727RVfzZIHZgekF5A2mIS"
+
+2018-06-06T03:58:11.497Z - warn: Script attached to "score" is missing or invalid. Detailed information:
+Node path: "Canvas/score"
+Script UUID: "0f727455-7f36-481d-981e-905e40da6212"
+Class ID: "0f727RVfzZIHZgekF5A2mIS"
+
+2018-06-06T03:58:11.497Z - warn: Script attached to "highScore" is missing or invalid. Detailed information:
+Node path: "Canvas/highScore"
+Script UUID: "0f727455-7f36-481d-981e-905e40da6212"
+Class ID: "0f727RVfzZIHZgekF5A2mIS"
+
+2018-06-06T06:06:20.964Z - warn: Script attached to "score" in scene "gameScene.fire" is missing or invalid. Detailed information:
+Node path: "Canvas/score"
+Asset url: "db://assets/views/gameScene.fire"
+Script UUID: "0f727455-7f36-481d-981e-905e40da6212"
+Class ID: "0f727RVfzZIHZgekF5A2mIS"
+
+2018-06-06T06:06:20.979Z - warn: Script attached to "highScore" in scene "gameScene.fire" is missing or invalid. Detailed information:
+Node path: "Canvas/highScore"
+Asset url: "db://assets/views/gameScene.fire"
+Script UUID: "0f727455-7f36-481d-981e-905e40da6212"
+Class ID: "0f727RVfzZIHZgekF5A2mIS"
+
+2018-06-06T06:06:21.054Z - warn: Script attached to "backtBtn" in prefab "loseEffect.prefab" is missing or invalid. Detailed information:
+Node path: "blackBG/backtBtn"
+Asset url: "db://assets/resources/prefabs/loseEffect.prefab"
+Script UUID: "c2d5b548-ebb6-4f02-af14-e635e5986c02"
+Class ID: "c2d5bVI67ZPAq8U5jXlmGwC"
+
+2018-06-06T06:06:21.054Z - warn: Script attached to "backtBtn" in prefab "loseEffect.prefab" is missing or invalid. Detailed information:
+Node path: "blackBG/backtBtn"
+Asset url: "db://assets/resources/prefabs/loseEffect.prefab"
+Script UUID: "3c5e9158-1c3f-4bc5-9599-dfdb9d4059e2"
+Class ID: "3c5e9FYHD9LxZWZ39udQFni"
+
