@@ -2,6 +2,10 @@
 
 const BasicLineNum = 5;  // 网格基础行格子数量
 
+/**
+ * 网格索引定义
+ * @type {*[]}
+ */
 const disList = [
             [0,  1,  2,  3,  4],
           [5,  6,  7,  8,  9,  10],
@@ -68,6 +72,7 @@ cc.Class({
 
     //
     onLoad () {
+        this.maxBlockScore = 2; // 当前砖块上可出现的最大数字
         this.isDeleting = false; //判断是否正在消除的依据
 
         //监听成功放下事件
@@ -180,7 +185,7 @@ cc.Class({
             node.y = fPosList[index].y;
 
             node.parent = this.node;
-            node.FKIndex = index;
+            node.gridIndex = index;  // 网格索引, 参加文件头部网格索引定义
 
             //加边
             let picNode = new cc.Node("bianSpr");
@@ -215,7 +220,7 @@ cc.Class({
 
         for (let i = 0; i < this.frameList.length; i++) {
             if (this.frameList[i].isHaveBlock) {
-                haveFKIndexList.push(this.frameList[i].FKIndex);
+                haveFKIndexList.push(this.frameList[i].gridIndex);
             }
         }
 

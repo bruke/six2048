@@ -310,7 +310,7 @@ cc.Class({
 
                 // 如果数量相等就说明这个方块在这个格子是可以放下的
                 if (count === children.length) {
-                    //cc.log(frameNode.FKIndex + "的位置可以放", children.length, count)
+                    //cc.log(frameNode.gridIndex + "的位置可以放", children.length, count)
                     canDropCount++;
                 }
             }
