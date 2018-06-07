@@ -77,8 +77,8 @@ cc.Class({
     },
 
     initBlockConfig () {
-        let a = this["liubianxingA"];
-        let h = this["liubianxingH"];
+        let a = this.liubianxingA;
+        let h = this.liubianxingH;
 
         this._configLists = [
             //单个

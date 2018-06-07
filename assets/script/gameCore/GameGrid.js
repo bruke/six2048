@@ -1,12 +1,13 @@
 
 
-const BasicLineNum = 5;  // 网格基础行格子数量
+const BasicLineNum = 4;  // 网格基础行格子数量
 
 /**
  * 网格索引定义
  * @type {*[]}
  */
 const disList = [
+    /*
             [0,  1,  2,  3,  4],
           [5,  6,  7,  8,  9,  10],
         [11, 12, 13, 14, 15, 16, 17],
@@ -16,8 +17,8 @@ const disList = [
        [43, 44, 45, 46, 47, 48, 49],
          [50, 51, 52, 53, 54, 55],
            [56, 57, 58, 59, 60],
+    */
 
-    /*
     //一个方向
           [0,  1,  2,  3],
         [4,  5,  6,  7,  8],
@@ -26,7 +27,7 @@ const disList = [
       [22, 23, 24, 25, 26, 27],
         [28, 29, 30, 31, 32],
           [33, 34, 35, 36],
-    */
+
 ];
 
 const Util = require('Util');
@@ -100,49 +101,37 @@ cc.Class({
             //第二行的位置信息
             {
                 count: BasicLineNum + 1,
-                srcPos: cc.p(2 * this["liubianxingH"], 0)
+                srcPos: cc.p(2 * this.liubianxingH, 0)
             },
 
             //第三行的位置信息
             {
                 count: BasicLineNum + 2,
-                srcPos: cc.p(2 * this["liubianxingH"] * 2, 0)
+                srcPos: cc.p(2 * this.liubianxingH * 2, 0)
             },
 
             //第四行的位置信息
             {
                 count: BasicLineNum + 3,
-                srcPos: cc.p(2 * this["liubianxingH"] * 3, 0)
+                srcPos: cc.p(2 * this.liubianxingH * 3, 0)
             },
 
             //第五行的位置信息
             {
-                count: BasicLineNum + 4,
-                srcPos: cc.p(2 * this["liubianxingH"] * 4, 0)
+                count: BasicLineNum + 2,
+                srcPos: cc.p(2 * this.liubianxingH * 3.5, (-3 * this.liubianxingA) / 2)
             },
 
             //第六行的位置信息
             {
-                count: BasicLineNum + 3,
-                srcPos: cc.p(2 * this["liubianxingH"] * 4 + this["liubianxingH"], (-3 * this["liubianxingA"]) / 2)
+                count: BasicLineNum + 1,
+                srcPos: cc.p(2 * this.liubianxingH * 3.5 + this.liubianxingH, (-3 * this.liubianxingA * 2) / 2)
             },
 
             //第七行的位置信息
             {
-                count: BasicLineNum + 2,
-                srcPos: cc.p(2 * this["liubianxingH"] * 4 + this["liubianxingH"] * 2, (-3 * this["liubianxingA"] * 2) / 2)
-            },
-
-            //第八行的位置信息
-            {
-                count: BasicLineNum + 1,
-                srcPos: cc.p(2 * this["liubianxingH"] * 4 + this["liubianxingH"] * 3, (-3 * this["liubianxingA"] * 3) / 2)
-            },
-
-            //第九行的位置信息
-            {
                 count: BasicLineNum,
-                srcPos: cc.p(2 * this["liubianxingH"] * 4 + this["liubianxingH"] * 4, (-3 * this["liubianxingA"] * 4) / 2)
+                srcPos: cc.p(2 * this.liubianxingH * 3.5 + this.liubianxingH * 2, (-3 * this.liubianxingA * 3) / 2)
             },
         ];
 
@@ -155,10 +144,10 @@ cc.Class({
         let posList = this.posList;
 
         //要加的单位向量
-        let addVec = cc.pMult(cc.pForAngle(240 * (2 * Math.PI / 360)), this["liubianxingH"] * 2);
+        let addVec = cc.pMult(cc.pForAngle(240 * (2 * Math.PI / 360)), this.liubianxingH * 2);
 
         //偏移至源点0，0的向量
-        let pianyiTo0p0Vec = cc.pMult(cc.pForAngle(120 * (2 * Math.PI / 360)), this["liubianxingH"] * 2 * 4);
+        let pianyiTo0p0Vec = cc.pMult(cc.pForAngle(120 * (2 * Math.PI / 360)), this.liubianxingH * 2 * 4);
 
         let frameList = [];
         let fPosList  = [];
