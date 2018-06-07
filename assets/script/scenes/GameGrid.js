@@ -60,6 +60,11 @@ cc.Class({
             url: cc.AudioClip,
         },
 
+        blockPrefab: {
+            default: null,
+            type: cc.Prefab,
+        },
+
         losePrefab: {
             default: null,
             type: cc.Prefab,
@@ -347,6 +352,7 @@ cc.Class({
      */
     createOneBlock (colorIndex) {
         // 创建一个块
+        /*
         let node = new cc.Node("colorSpr");
         let sprite = node.addComponent(cc.Sprite);
         sprite.spriteFrame = this["color" + colorIndex];
@@ -357,7 +363,12 @@ cc.Class({
         wenliSprite.spriteFrame = this["kuaiTex"];
         wenliNode.parent = node;
 
-        return node;
+         return node;
+        */
+
+        let blockItem = cc.instantiate(this.blockPrefab);
+        //blockItem.initWithSth();
+        return blockItem;
     },
 
     /**
@@ -365,7 +376,7 @@ cc.Class({
      * @returns {cc.Node}
      */
     newOneNode () {
-        let kuaiNode = new cc.Node("kuai");
+        let blockNode = new cc.Node("kuai");
         let config = this._configLists;
 
         //随机样子
@@ -373,6 +384,7 @@ cc.Class({
         let posList = config[randomIndex];
 
         randomIndex = Util.random(1, 4);
+
         let sumX = 0;
         let countX = 0;
         let sumY = 0;
@@ -380,26 +392,26 @@ cc.Class({
 
         for (let index = 0; index < posList.length; index++) {
             let pos = posList[index];
-            let kuai = this.createOneBlock(randomIndex);
-            kuai.x = pos.x;
+            let block = this.createOneBlock(randomIndex);
 
-            sumX += kuai.x;
+            block.x = pos.x;
+            block.y = pos.y;
+
+            sumX += block.x;
+            sumY += block.y;
+
             countX++;
-
-            kuai.y = pos.y;
-
-            sumY += kuai.y;
             countY++;
 
-            kuaiNode.addChild(kuai);
+            blockNode.addChild(block);
         }
 
-        kuaiNode.x = -sumX / countX;
-        kuaiNode.y = -sumY / countY;
+        blockNode.x = -sumX / countX;
+        blockNode.y = -sumY / countY;
 
-        kuaiNode.setScale(scaleParam);
+        blockNode.setScale(scaleParam);
 
-        return kuaiNode;
+        return blockNode;
     },
 
     /**
@@ -483,15 +495,15 @@ cc.Class({
                     let xIndex = arguments[1];
                     this.frameList[xIndex].isHaveBlock = false;
 
-                    let FKNode = this.frameList[xIndex].getChildByName("colorSpr");
-                    if (!FKNode) {
+                    let blockNode = this.frameList[xIndex].getChildByName("colorSpr");
+                    if (!blockNode) {
                         return; //防止没有这个方块的时候
                     }
 
-                    FKNode.cascadeOpacity = true;
+                    blockNode.cascadeOpacity = true;
 
                     //这个假方块变大并且渐隐掉
-                    FKNode.runAction(cc.sequence(
+                    blockNode.runAction(cc.sequence(
                         cc.spawn(cc.scaleTo(0.5, 2), cc.fadeOut(0.5)),
                         cc.removeSelf(true)
                     ))

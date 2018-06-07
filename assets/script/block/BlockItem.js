@@ -1,5 +1,7 @@
 
 
+const Util = require('Util');
+
 cc.Class({
     extends: cc.Component,
 
@@ -72,18 +74,24 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-        this.updateBlock();
+        this._scoreDict = [2, 4, 8, 16, 32, 64, 128, 512, 1024, 2048];
     },
 
     start () {
+        // Test
+        let index = Util.random(0, this._scoreDict.length);
+        this._scoreNum = this._scoreDict[index];
+
+        this.updateBlock();
+        // Test
     },
 
     // update (dt) {},
 
     updateBlock () {
-        let texture = this['imgframe' + this._scoreNum];
-        if (texture) {
-            this.blockImg.texture = texture;
+        let spriteFrame = this['imgframe' + this._scoreNum];
+        if (spriteFrame) {
+            this.blockImg.spriteFrame = spriteFrame;
         }
     },
 });
