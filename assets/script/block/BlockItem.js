@@ -74,7 +74,7 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-        this._scoreDict = [2, 4, 8, 16, 32, 64, 128, 512, 1024, 2048];
+        this._scoreDict = [2, 4, 8, 16, 32, 64, 128, 512, 1024/*, 2048*/];
     },
 
     start () {

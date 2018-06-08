@@ -190,8 +190,8 @@
     "clearSound": {
       "__uuid__": "cf83bd1c-b505-4e10-8892-6439df23d3af"
     },
-    "blockPrefab": {
-      "__uuid__": "f677c0b2-e126-4863-a42f-e0be25f94912"
+    "blockCompPrefab": {
+      "__uuid__": "b460024b-a114-409a-ba3a-cf20313ee5b9"
     },
     "losePrefab": {
       "__uuid__": "4fd10055-ccca-426c-af70-fc5a5c65d157"
@@ -223,21 +223,11 @@
     "canNotSound2": {
       "__uuid__": "7c27a4c6-0b69-47b4-ba07-dfe11d820b4e"
     },
-    "kuaiTex": {
-      "__uuid__": "5f22aa18-49ae-499a-8b3d-e5b9dda46438"
-    },
-    "color1": {
-      "__uuid__": "a05e7b9d-de71-4b0e-b10a-9dcab8e753a3"
-    },
-    "color2": {
-      "__uuid__": "a6affece-5e13-4d19-b3dc-ee7f8467c12b"
-    },
-    "color3": {
-      "__uuid__": "1b82c19c-d8c4-4e35-a9ed-d84ae09d46f0"
-    },
-    "color4": {
-      "__uuid__": "a91361b4-7294-4a99-8c66-113c3dc9d65e"
-    }
+    "kuaiTex": null,
+    "color1": null,
+    "color2": null,
+    "color3": null,
+    "color4": null
   },
   {
     "__type__": "cc.Node",

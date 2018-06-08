@@ -14,19 +14,6 @@ let theScore = 0;
  * @type {*[]}
  */
 const disList = [
-    /*
-            [0,  1,  2,  3,  4],
-          [5,  6,  7,  8,  9,  10],
-        [11, 12, 13, 14, 15, 16, 17],
-      [18, 19, 20, 21, 22, 23, 24, 25],
-    [26, 27, 28, 29, 30, 31, 32, 33, 34],
-      [35, 36, 37, 38, 39, 40, 41, 42],
-       [43, 44, 45, 46, 47, 48, 49],
-         [50, 51, 52, 53, 54, 55],
-           [56, 57, 58, 59, 60],
-    */
-
-    //一个方向
           [0,  1,  2,  3],
         [4,  5,  6,  7,  8],
       [9, 10, 11, 12, 13, 14],
@@ -34,7 +21,6 @@ const disList = [
       [22, 23, 24, 25, 26, 27],
         [28, 29, 30, 31, 32],
           [33, 34, 35, 36]
-
 ];
 
 
@@ -60,7 +46,7 @@ cc.Class({
             url: cc.AudioClip,
         },
 
-        blockPrefab: {
+        blockCompPrefab: {
             default: null,
             type: cc.Prefab,
         },
@@ -115,35 +101,6 @@ cc.Class({
             default: null,
             url: cc.AudioClip,
         },
-
-
-        // 临时处理, 这部分要整合到BlockItem中
-        kuaiTex: {
-            default: null,
-            type: cc.SpriteFrame,
-        },
-
-        color1: {
-            default: null,
-            type: cc.SpriteFrame,
-        },
-
-        color2: {
-            default: null,
-            type: cc.SpriteFrame,
-        },
-
-        color3: {
-            default: null,
-            type: cc.SpriteFrame,
-        },
-
-        color4: {
-            default: null,
-            type: cc.SpriteFrame,
-        },
-        //
-
     },
 
     //
@@ -158,15 +115,15 @@ cc.Class({
     },
 
     initEnv () {
-        this.maxBlockScore = 2; // 当前砖块上可出现的最大数字
-        this.isDeleting = false; //判断是否正在消除的依据
+        this.maxBlockScore = 2;  // 当前砖块上可出现的最大数字
+        this.isDeleting = false; // 判断是否正在消除的依据
 
         this.previewNode.cascadeOpacity = true;
 
         this.blockItemList = [];  // 当前网格中已经放置的方块元素
-        this.gridItemList  = []; // 全部网格元素精灵 (方块元素放到对应的网格元素上)
+        this.gridItemList  = [];  // 全部网格元素精灵 (方块元素放到对应的网格元素上)
+        this.frameList = [];
 
-        this.initBlockConfig();
         this.initGridOriginPos();
         this.initEventHandlers();
     },
@@ -178,21 +135,6 @@ cc.Class({
 
     initEventHandlers () {
         this.addPreviewTouchEvent();
-    },
-
-    initBlockConfig () {
-        let a = this.liubianxingA;
-        let h = this.liubianxingH;
-
-        this._configLists = [
-            //单个
-            [cc.p(0, 0)],
-
-            //两个
-            [cc.p(0, 0), cc.p(h * 2, 0)],    // 横摆
-            [cc.p(0, 0), cc.p(h, a * 1.5)],  // 正斜
-            [cc.p(0, 0), cc.p(h, -a * 1.5)], // 反斜
-        ];
     },
 
     initGridOriginPos () {
@@ -253,16 +195,17 @@ cc.Class({
         this.previewNode.oy = this.previewNode.y;
 
         this.previewNode.on(cc.Node.EventType.TOUCH_START, function() {
-            this.y += upH;
-            this.getChildByName("kuai").setScale(1);
+            this.previewNode.y += upH;
+            this.previewGridComp.getComponent('BlockComponent').setScale(1);
             cc.audioEngine.playEffect(self.anSound);
 
-        }, this.previewNode);
+        }, this);
 
         this.previewNode.on(cc.Node.EventType.TOUCH_MOVE, function(event) {
             let delta = event.touch.getDelta();
-            this.x += delta.x;
-            this.y += delta.y;
+
+            this.previewNode.x += delta.x;
+            this.previewNode.y += delta.y;
 
             self.collisionFunc();
 
@@ -272,7 +215,7 @@ cc.Class({
             } else {
                 self.changeColorDeal();
             }
-        }, this.previewNode);
+        }, this);
 
         this.previewNode.on(cc.Node.EventType.TOUCH_CANCEL, function(event) {
             this.dropDownFunc();
@@ -341,77 +284,10 @@ cc.Class({
     createNextNode () {
         this.previewNode.removeAllChildren();
 
-        let oneNode = this.newOneNode();
-        this.previewNode.addChild(oneNode);
-    },
+        let blockComp = cc.instantiate(this.blockCompPrefab);
 
-    /**
-     * 创建一个新块
-     * @param colorIndex
-     * @returns {cc.Node}
-     */
-    createOneBlock (colorIndex) {
-        // 创建一个块
-        /*
-        let node = new cc.Node("colorSpr");
-        let sprite = node.addComponent(cc.Sprite);
-        sprite.spriteFrame = this["color" + colorIndex];
-
-        // 加纹理
-        let wenliNode = new cc.Node("wenliSpr");
-        let wenliSprite = wenliNode.addComponent(cc.Sprite);
-        wenliSprite.spriteFrame = this["kuaiTex"];
-        wenliNode.parent = node;
-
-         return node;
-        */
-
-        let blockItem = cc.instantiate(this.blockPrefab);
-        //blockItem.initWithSth();
-        return blockItem;
-    },
-
-    /**
-     * 创建新块节点
-     * @returns {cc.Node}
-     */
-    newOneNode () {
-        let blockNode = new cc.Node("kuai");
-        let config = this._configLists;
-
-        //随机样子
-        let randomIndex = Util.random(0, config.length - 1);
-        let posList = config[randomIndex];
-
-        randomIndex = Util.random(1, 4);
-
-        let sumX = 0;
-        let countX = 0;
-        let sumY = 0;
-        let countY = 0;
-
-        for (let index = 0; index < posList.length; index++) {
-            let pos = posList[index];
-            let block = this.createOneBlock(randomIndex);
-
-            block.x = pos.x;
-            block.y = pos.y;
-
-            sumX += block.x;
-            sumY += block.y;
-
-            countX++;
-            countY++;
-
-            blockNode.addChild(block);
-        }
-
-        blockNode.x = -sumX / countX;
-        blockNode.y = -sumY / countY;
-
-        blockNode.setScale(scaleParam);
-
-        return blockNode;
+        this.previewGridComp = blockComp;
+        this.previewNode.addChild(blockComp);
     },
 
     /**
@@ -495,7 +371,7 @@ cc.Class({
                     let xIndex = arguments[1];
                     this.frameList[xIndex].isHaveBlock = false;
 
-                    let blockNode = this.frameList[xIndex].getChildByName("colorSpr");
+                    let blockNode = this.frameList[xIndex].getChildByName("blockRoot");
                     if (!blockNode) {
                         return; //防止没有这个方块的时候
                     }
@@ -724,7 +600,7 @@ cc.Class({
         this.gridItemList = []; //清空数组
         this.changeColorDeal();
 
-        this.previewNode.getChildByName("kuai").setScale(scaleParam);
+        this.previewGridComp.getComponent('BlockComponent').setScale(scaleParam);
 
         this.previewNode.x = this.previewNode.ox;
         this.previewNode.y = this.previewNode.oy;
