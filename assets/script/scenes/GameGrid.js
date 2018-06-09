@@ -197,7 +197,7 @@ cc.Class({
         this.previewNode.oy = this.previewNode.y;
 
         this.previewNode.on(cc.Node.EventType.TOUCH_START, function() {
-            this.previewNode.y += upH;
+            //this.previewNode.y += upH;
             this.previewGridComp.getComponent('BlockComponent').setScale(1);
             cc.audioEngine.playEffect(self.anSound);
 
@@ -225,7 +225,12 @@ cc.Class({
         }, this);
 
         this.previewNode.on(cc.Node.EventType.TOUCH_END, function(event) {
+            //
             this.dropDownFunc();
+
+            //
+            let previewBlock = this.previewGridComp.getComponent('BlockComponent');
+            previewBlock.rotateOnce();
 
         }, this)
 
@@ -551,7 +556,7 @@ cc.Class({
         return true;
     },
 
-    //放下逻辑
+    // 放下逻辑
     dropDownFunc () {
         //
         if (!this.checkIsCanDrop()) {
@@ -584,7 +589,7 @@ cc.Class({
         // 放回去
         this.putItemBack();
 
-        //直接用棋盘检测是不是输了
+        // 直接用棋盘检测是不是输了
         this.checkIsLose();
     },
 

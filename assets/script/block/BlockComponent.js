@@ -27,6 +27,9 @@ cc.Class({
 
     onLoad () {
         this.blockList = [];
+
+        this.isRotating = false;
+
         this.newOneNode();
     },
 
@@ -127,6 +130,29 @@ cc.Class({
      * 旋转90度
      */
     rotateOnce () {
+        // 临时写一个直接交换的动作, 后续优化要做成圆周动作
+        if (this.isRotating || this.blockList.length < 2) {
+            return;
+        }
 
+        let block0 = this.blockList[0];
+        let block1 = this.blockList[1];
+
+        let pos0 = block0.position;
+        let pos1 = block1.position;
+
+        let action0 = cc.moveTo(0.5, pos1);
+        let action1 = cc.sequence(cc.moveTo(0.5, pos0), cc.callFunc(function () {
+            this.isRotating = false;
+
+            // 交换
+            this.blockList[0] = block1;
+            this.blockList[1] = block0;
+        } ,this));
+
+        block0.runAction(action0);
+        block1.runAction(action1);
+
+        this.isRotating = true;
     }
 });
