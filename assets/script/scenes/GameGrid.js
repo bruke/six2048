@@ -345,7 +345,7 @@ cc.Class({
     doEliminate (eliminateList) {
         let actionAry = [];
 
-        //消除
+        // 消除
         let count = 0;
         for (let i = 0; i < eliminateList.length; i++) {
 
@@ -353,7 +353,7 @@ cc.Class({
             for (let j = 0; j < oneList.length; j++) {
                 let xIndex = oneList[j];
 
-                //
+                // 得分效果
                 actionAry.push(cc.callFunc(function(){
                     let xIndex = arguments[1][0];
                     let count = arguments[1][1];
@@ -361,20 +361,20 @@ cc.Class({
 
                     this.frameList[xIndex].addChild(effNode);
 
-                    //加分飘字
+                    // 加分飘字
                     let tipNode = cc.instantiate(this.tipPrefab);
                     let label = tipNode.getComponent(cc.Label);
 
                     label.string = "+" + this.getAddScoreCal(count);
-                    this.frameList[xIndex].addChild(tipNode)
+                    this.frameList[xIndex].addChild(tipNode);
                 }, this, [xIndex, count]));
 
-                //
+                // 放大、渐隐消除效果
                 actionAry.push(cc.callFunc(function() {
                     let xIndex = arguments[1];
                     this.frameList[xIndex].isHaveBlock = false;
 
-                    let blockNode = this.frameList[xIndex].getChildByName("blockRoot");
+                    let blockNode = this.frameList[xIndex].getChildByName("BlockItem");
                     if (!blockNode) {
                         return; //防止没有这个方块的时候
                     }
