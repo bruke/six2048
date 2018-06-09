@@ -124,6 +124,8 @@ cc.Class({
         this.gridItemList  = [];  // 全部网格元素精灵 (方块元素放到对应的网格元素上)
         this.frameList = [];
 
+        this.curPreviewBlockGroup = null;
+
         this.initGridOriginPos();
         this.initEventHandlers();
     },
@@ -285,6 +287,7 @@ cc.Class({
         this.previewNode.removeAllChildren();
 
         let blockComp = cc.instantiate(this.blockCompPrefab);
+        this.curPreviewBlockGroup = blockComp;
 
         this.previewGridComp = blockComp;
         this.previewNode.addChild(blockComp);
@@ -429,9 +432,13 @@ cc.Class({
     //检测自身是否已经无处可放
     checkValidPutPosition () {
         let canDropCount = 0;
-        let children = this.previewNode.children[0].children;
+        //let children = this.previewNode.children[0].children;
 
-        // 一个个格子放试一下能不能放
+        let curPreviewBlocks = this.curPreviewBlockGroup;
+        let blockComp = curPreviewBlocks.getComponent('BlockComponent');
+        let blockList = blockComp.getAllBlocks();
+
+        // 逐个格子尝试一下一下能不能放
         for (let i = 0; i < this.frameList.length; i++) {
             let frameNode = this.frameList[i];
             let srcPos = cc.p(frameNode.x, frameNode.y);
@@ -439,9 +446,9 @@ cc.Class({
 
             if ( !frameNode.isHaveBlock ) {
                 // 这里做是否可以放的判断
-                for (let j = 1; j < children.length; j++) {
-                    let len = 27; // 碰撞距离
-                    let childPos = cc.pAdd(srcPos, cc.p(children[j].x, children[j].y));
+                for (let j = 1; j < blockList.length; j++) {
+                    let len = 27; // 碰撞距离 - 格子中心点到边界的距离, 把六边形近似为一个圆形
+                    let childPos = cc.pAdd(srcPos, cc.p(blockList[j].x, blockList[j].y));
 
                     // 碰撞检测
                     for (let k = 0; k < this.frameList.length; k++) {
@@ -455,7 +462,7 @@ cc.Class({
                 }
 
                 // 如果数量相等就说明这个方块在这个格子是可以放下的
-                if (count === children.length) {
+                if (count === blockList.length) {
                     //cc.log(frameNode.gridIndex + "的位置可以放", children.length, count)
                     canDropCount++;
                 }
@@ -491,16 +498,18 @@ cc.Class({
         this.gridItemList = []; //清空数组
         this.blockItemList = [];    //清空数组
 
-        let children = this.previewNode.children[0].children;
+        let curPreviewBlocks = this.curPreviewBlockGroup;
+        let blockComp = curPreviewBlocks.getComponent('BlockComponent');
+        let blockList = blockComp.getAllBlocks();
 
-        for (let i = 0; i < children.length; i++) {
-
-            let pianyiCPos = cc.pAdd(cc.p(this.previewNode.children[0].x, this.previewNode.children[0].y), cc.p(children[i].x, children[i].y))
-            let childPos = cc.pAdd(this.previewNode.position, pianyiCPos);
+        for (let i = 0; i < blockList.length; i++) {
+            let block = blockList[i];
+            let offsetPos = cc.pAdd(cc.p(curPreviewBlocks.x, curPreviewBlocks.y), cc.p(block.x, block.y));
+            let childPos = cc.pAdd(this.previewNode.position, offsetPos);
             let frame = this.checkPosFunc(childPos);
 
             if (frame) {
-                this.blockItemList.push(children[i]);
+                this.blockItemList.push(block);
                 this.gridItemList.push(frame)
             }
         }
@@ -509,22 +518,27 @@ cc.Class({
 
     // 一个点和棋盘的所有框检测
     checkPosFunc (pos) {
-        let len = 27; // 碰撞距离
+        let len = 27; // 碰撞距离 - 格子中心点到边界的距离, 把六边形近似为一个圆形
 
         for (let i = 0; i < this.frameList.length; i++) {
             let frameNode = this.frameList[i];
             let dis = cc.pDistance(cc.p(frameNode.x, frameNode.y), pos);
 
             if (dis <= len) {
-                return frameNode
+                return frameNode;
             }
         }
+        return null;
     },
 
     //检测是否能够放下
     checkIsCanDrop () {
         // 先判断数量是否一致，不一致说明有一个超出去了
-        if (this.gridItemList.length === 0 || this.gridItemList.length !== this.previewNode.children[0].children.length) {
+        let curPreviewBlocks = this.curPreviewBlockGroup;
+        let blockComp = curPreviewBlocks.getComponent('BlockComponent');
+        let blockList = blockComp.getAllBlocks();
+
+        if (this.gridItemList.length === 0 || this.gridItemList.length !== blockList.length) {
             return false;
         }
 

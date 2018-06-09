@@ -26,7 +26,12 @@ cc.Class({
     },
 
     onLoad () {
+        this.blockList = [];
         this.newOneNode();
+    },
+
+    onDestory () {
+        this.blockList.length = 0;
     },
 
     start () {
@@ -47,6 +52,10 @@ cc.Class({
             [cc.p(0, 0), cc.p(h, a * 1.5)],  // 正斜
             [cc.p(0, 0), cc.p(h, -a * 1.5)], // 反斜
         ];
+    },
+
+    getAllBlocks () {
+        return this.blockList;
     },
 
     /**
@@ -98,6 +107,8 @@ cc.Class({
             countY++;
 
             blockRoot.addChild(block);
+
+            this.blockList.push(block);
         }
 
         blockRoot.x = -sumX / countX;
