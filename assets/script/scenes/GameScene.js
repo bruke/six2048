@@ -386,24 +386,28 @@ cc.Class({
         let blockComp = curPreviewBlocks.getComponent('BlockComponent');
         let blockList = blockComp.getAllBlocks();
 
+        let triggerLen = 50; // 碰撞距离 - 格子中心点到边界的距离, 把六边形近似为一个圆形
+
         // 逐个格子尝试一下一下能不能放
         for (let i = 0; i < this.frameList.length; i++) {
             let frameNode = this.frameList[i];
-            let srcPos = cc.p(frameNode.x, frameNode.y);
+            //let srcPos = cc.p(frameNode.x, frameNode.y);
+            let srcPos = frameNode.parent.convertToWorldSpaceAR(frameNode.position);
             let count = 1;
 
             if ( !frameNode.isHaveBlock ) {
                 // 这里做是否可以放的判断
                 for (let j = 1; j < blockList.length; j++) {
-                    let len = 27; // 碰撞距离 - 格子中心点到边界的距离, 把六边形近似为一个圆形
-                    let childPos = cc.pAdd(srcPos, cc.p(blockList[j].x, blockList[j].y));
+
+                    let childPos = cc.pAdd(srcPos, blockList[j].position);
 
                     // 碰撞检测
                     for (let k = 0; k < this.frameList.length; k++) {
                         let tFrameNode = this.frameList[k];
-                        let dis = cc.pDistance(cc.p(tFrameNode.x, tFrameNode.y), childPos);
+                        let tGridPos = tFrameNode.parent.convertToWorldSpaceAR(tFrameNode.position);
+                        let dis = cc.pDistance(tGridPos, childPos);
 
-                        if (dis <= len && !tFrameNode.isHaveBlock) {
+                        if (dis <= triggerLen && !tFrameNode.isHaveBlock) {
                             count++; // 可以放就要累加计数
                         }
                     }
@@ -509,6 +513,7 @@ cc.Class({
             // 放回去
             this.putItemBack();
             cc.audioEngine.playEffect(this.canNotSound1);
+
             return;
         }
 
@@ -572,7 +577,7 @@ cc.Class({
      */
     addScore (clearCount, isDropAdd) {
         let addScoreCount = this.getAddScoreCal(clearCount, isDropAdd);
-        let node = cc.find('Canvas/score/scoreLabel');
+        let node = cc.find('Canvas/scoreNode/scoreLabel');
         let label = node.getComponent(cc.Label);
 
         label.string = addScoreCount + Number(label.string);
