@@ -4,16 +4,13 @@
 const Util = require('Util');
 
 const BasicLineNum = 4;  // 网格基础行格子数量
-const scaleParam   = 1;
-
-let theScore = 0;
-
+const MaxGridLines = 7;  // 网格最大行数
 
 /**
  * 网格索引定义
  * @type {*[]}
  */
-const disList = [
+const GridIndexDef = [
           [0,  1,  2,  3],
         [4,  5,  6,  7,  8],
       [9, 10, 11, 12, 13, 14],
@@ -23,6 +20,9 @@ const disList = [
           [33, 34, 35, 36]
 ];
 
+let TotalGridsNum = 37;
+
+let theScore = 0;
 
 cc.Class({
     extends: cc.Component,
@@ -108,9 +108,11 @@ cc.Class({
 
         this.previewNode.cascadeOpacity = true;
 
-        this.blockItemList = [];  // 当前网格中已经放置的方块元素
-        this.gridItemList  = [];  // 全部网格元素精灵 (方块元素放到对应的网格元素上)
-        this.frameList = [];
+        this.gridItemList = [];  // 全部网格元素精灵 (方块元素放到对应的网格元素上)
+
+        this.curDragItemList  = [];   // 当前网格中已经放置的方块元素
+        this.curDropGridList  = [];   // 当前拖动预览方块放置到网格上对应网格对象
+        this.curBlockListInGrid = []; // 当前网格上已有的所有数字块
 
         this.curPreviewBlockGroup = null;
 
@@ -198,7 +200,7 @@ cc.Class({
             }
         }
 
-        this.frameList = frameList;
+        this.gridItemList = frameList;
     },
 
     createNextNode () {
@@ -212,10 +214,49 @@ cc.Class({
     },
 
     /**
+     * 根据网格索引获取所在行
+     * @param gridIndex
+     * @returns {number}
+     */
+    getRowWithIndex (gridIndex) {
+        let row = -1;
+
+        if (gridIndex < 0 || gridIndex >= TotalGridsNum) {
+            return row;
+        }
+
+        for (let i = 0; i < GridIndexDef.length; i++) {
+            let rowIndexList = GridIndexDef[i];
+            if (rowIndexList.indexOf(gridIndex) !== -1) {
+                row = i;
+                break;
+            }
+        }
+
+        return row;
+    },
+
+    /**
+     * 检查给定索引是否存在于指定行内
+     * @param gridIndex
+     * @param row
+     * @returns {boolean}
+     */
+    isIndexInRow (gridIndex, row) {
+        if (gridIndex < 0 || gridIndex >= TotalGridsNum || row < 0 ||row >= MaxGridLines) {
+            return false;
+        }
+
+        return (GridIndexDef[row].indexOf(gridIndex) >= 0);
+    },
+
+    /**
      * 获得指定网格位置的所有相邻格子坐标
+     * 一个网格的所有邻居包括左右各一个、和上下各两个共六个
+     * 处于边界的元素邻居不足六个
      * @param gridIndex
      */
-    getAllNeighborIndex (gridIndex) {
+    getAllNeighborsWithIndex (gridIndex) {
         //      [0,  1,  2,  3],
         //     [4,  5,  6,  7,  8],
         //   [9, 10, 11, 12, 13, 14],
@@ -225,10 +266,74 @@ cc.Class({
         //        [33, 34, 35, 36]
 
         let blockComp = this.previewGridComp.getComponent('BlockComponent');
-        let blockList = blockComp.getAllBlocks();
+        let newBlockList = blockComp.getAllBlocks();  // 本次新拖入的新块列表 (1个或2个)
+        let gridItemList = this.curDropGridList;         // 所有的网格槽元素
 
-        let gridItemList = this.blockItemList;
+        let neighborBlocks = [];
+        let neighborIndexes = [];
+
+        let row = this.getRowWithIndex(gridIndex); // 获取所在行
+        if (row !== -1) {
+            //let rowIndex = GridIndexDef[row].indexOf(gridIndex); // 获取在行内的位置
+
+            // 左侧
+            let leftIndex = gridIndex - 1;
+            leftIndex = this.isIndexInRow(leftIndex, row) ? leftIndex : -1;
+
+            // 右侧
+            let rightIndex = gridIndex + 1;
+            rightIndex = this.isIndexInRow(rightIndex, row) ? rightIndex : -1;
+
+            // 左上
+            let leftTopIndex = gridIndex - (BasicLineNum + row);
+            if (row >= BasicLineNum) {
+                leftTopIndex += Math.abs(row - BasicLineNum);
+            }
+            leftTopIndex = this.isIndexInRow(leftTopIndex, row - 1) ? leftTopIndex : -1;
+
+            // 右上
+            let rightTopIndex = gridIndex - (BasicLineNum - 1 + row);
+            if (row >= BasicLineNum) {
+                rightTopIndex += Math.abs(row - BasicLineNum);
+            }
+            rightTopIndex = this.isIndexInRow(rightTopIndex, row - 1) ? rightTopIndex : -1;
+
+            // 左下
+            let leftDownIndex = gridIndex + (BasicLineNum + row);
+            if (row >= BasicLineNum) {
+                leftDownIndex -= Math.abs(row - BasicLineNum);
+            }
+            leftDownIndex = this.isIndexInRow(leftDownIndex, row + 1) ? leftDownIndex : -1;
+
+            // 右下
+            let rightDownIndex = gridIndex + (BasicLineNum + 1 + row);
+            if (row >= BasicLineNum) {
+                rightDownIndex -= Math.abs(row - BasicLineNum);
+            }
+            rightDownIndex = this.isIndexInRow(rightDownIndex, row + 1) ? rightDownIndex : -1;
+
+            //
+            neighborIndexes = [leftIndex, rightIndex, leftTopIndex, rightTopIndex, leftDownIndex, rightDownIndex];
+        }
+
+        // 排序
+        neighborIndexes.sort(function (a, b) {
+            return a > b;
+        });
+
+        // 过滤无效索引
+        neighborIndexes = neighborIndexes.filter(function (index) {
+            return index >= 0 && index < TotalGridsNum;
+        });
+
+        //
+        if (neighborIndexes.length > 0) {
+
+        }
+
+        return neighborBlocks;
     },
+
 
     /**
      * 获得与指定位置上连续相邻的网格坐标集合
@@ -238,7 +343,7 @@ cc.Class({
     getContinuesSameBlockIndex (gridIndex, blockScore) {
         let result = [];
 
-        this.getAllNeighborIndex(gridIndex);
+        let neighbors = this.getAllNeighborsWithIndex(gridIndex);
 
         return result;
     },
@@ -249,9 +354,9 @@ cc.Class({
     checkEliminate (evt) {
         let blockIndexList = [];
 
-        for (let i = 0; i < this.frameList.length; i++) {
-            if (this.frameList[i].isHaveBlock) {
-                blockIndexList.push(this.frameList[i].gridIndex);
+        for (let i = 0; i < this.gridItemList.length; i++) {
+            if (this.gridItemList[i].isHaveBlock) {
+                blockIndexList.push(this.gridItemList[i].gridIndex);
             }
         }
 
@@ -261,9 +366,9 @@ cc.Class({
 
         let eliminateList = []; //要消除的方块列表
 
-        /* */
-        for (let i = 0; i < disList.length; i++) {
-            let oneList = disList[i];
+        /*
+        for (let i = 0; i < GridIndexDef.length; i++) {
+            let oneList = GridIndexDef[i];
             let intersectAry = this.get2AryIntersect(blockIndexList, oneList);
 
             if (intersectAry.length > 0) {
@@ -273,18 +378,18 @@ cc.Class({
                 }
             }
         }
+         */
 
-
-        /*
+        /**/
         // added by bruke 20180610
-        for (let i = 0; i < this.blockItemList.length; i++) {
-            let blockItem = this.blockItemList[i];
+        for (let i = 0; i < this.curDragItemList.length; i++) {
+            let blockItem = this.curDragItemList[i];
             let blockComp = blockItem.getComponent('BlockItem');
             let gridIndex = blockItem.gridIndex;
 
             let result = this.getContinuesSameBlockIndex(gridIndex, blockComp.scoreNum);
         }
-        */
+
 
         // end bruke
 
@@ -313,22 +418,22 @@ cc.Class({
                     let count = arguments[1][1];
                     let effNode = cc.instantiate(this.boomEffPrefab);
 
-                    this.frameList[xIndex].addChild(effNode);
+                    this.gridItemList[xIndex].addChild(effNode);
 
                     // 加分飘字
                     let tipNode = cc.instantiate(this.tipPrefab);
                     let label = tipNode.getComponent(cc.Label);
 
                     label.string = "+" + this.getAddScoreCal(count);
-                    this.frameList[xIndex].addChild(tipNode);
+                    this.gridItemList[xIndex].addChild(tipNode);
                 }, this, [xIndex, count]));
 
                 // 放大、渐隐消除效果
                 actionAry.push(cc.callFunc(function() {
                     let xIndex = arguments[1];
-                    this.frameList[xIndex].isHaveBlock = false;
+                    this.gridItemList[xIndex].isHaveBlock = false;
 
-                    let blockNode = this.frameList[xIndex].getChildByName("BlockItem");
+                    let blockNode = this.gridItemList[xIndex].getChildByName("BlockItem");
                     if (!blockNode) {
                         return; //防止没有这个方块的时候
                     }
@@ -389,8 +494,8 @@ cc.Class({
         let triggerLen = 50; // 碰撞距离 - 格子中心点到边界的距离, 把六边形近似为一个圆形
 
         // 逐个格子尝试一下一下能不能放
-        for (let i = 0; i < this.frameList.length; i++) {
-            let frameNode = this.frameList[i];
+        for (let i = 0; i < this.gridItemList.length; i++) {
+            let frameNode = this.gridItemList[i];
             //let srcPos = cc.p(frameNode.x, frameNode.y);
             let srcPos = frameNode.parent.convertToWorldSpaceAR(frameNode.position);
             let count = 1;
@@ -402,8 +507,8 @@ cc.Class({
                     let childPos = cc.pAdd(srcPos, blockList[j].position);
 
                     // 碰撞检测
-                    for (let k = 0; k < this.frameList.length; k++) {
-                        let tFrameNode = this.frameList[k];
+                    for (let k = 0; k < this.gridItemList.length; k++) {
+                        let tFrameNode = this.gridItemList[k];
                         let tGridPos = tFrameNode.parent.convertToWorldSpaceAR(tFrameNode.position);
                         let dis = cc.pDistance(tGridPos, childPos);
 
@@ -427,8 +532,8 @@ cc.Class({
     // 变色处理
     changeColorDeal (isJustClearColor) {
         //
-        for (let i = 0; i < this.frameList.length; i++) {
-            let guangPicNode = this.frameList[i].getChildByName("bianSpr");
+        for (let i = 0; i < this.gridItemList.length; i++) {
+            let guangPicNode = this.gridItemList[i].getChildByName("bianSpr");
             //guangPicNode.active = false;
         }
 
@@ -437,8 +542,8 @@ cc.Class({
             return;
         }
 
-        for (let i = 0; i < this.gridItemList.length; i++) {
-            let guangPicNode = this.gridItemList[i].getChildByName("bianSpr");
+        for (let i = 0; i < this.curDropGridList.length; i++) {
+            let guangPicNode = this.curDropGridList[i].getChildByName("bianSpr");
             //guangPicNode.active = true;
         }
     },
@@ -447,8 +552,8 @@ cc.Class({
     //碰撞逻辑
     collisionFunc () {
         //
-        this.gridItemList = [];
-        this.blockItemList = [];
+        this.curDropGridList = [];
+        this.curDragItemList = [];
 
         let curPreviewBlocks = this.curPreviewBlockGroup;
         let blockComp = curPreviewBlocks.getComponent('BlockComponent');
@@ -460,8 +565,8 @@ cc.Class({
             let gridItem = this.checkPosFunc(blockPos);
 
             if (gridItem) {
-                this.blockItemList.push(block);
-                this.gridItemList.push(gridItem)
+                this.curDragItemList.push(block);
+                this.curDropGridList.push(gridItem)
             }
         }
     },
@@ -473,8 +578,8 @@ cc.Class({
         let gameGrid = cc.find('Canvas/gameGrid');
         let tarGridItem = null;
 
-        for (let i = 0; i < this.frameList.length; i++) {
-            let gridItem = this.frameList[i];
+        for (let i = 0; i < this.gridItemList.length; i++) {
+            let gridItem = this.gridItemList[i];
             let gridPos = gridItem.parent.convertToWorldSpaceAR(gridItem.position);
             let distance = cc.pDistance(gridPos, worldPos);
 
@@ -493,13 +598,13 @@ cc.Class({
         let blockComp = curPreviewBlocks.getComponent('BlockComponent');
         let blockList = blockComp.getAllBlocks();
 
-        if (this.gridItemList.length === 0 || this.gridItemList.length !== blockList.length) {
+        if (this.curDropGridList.length === 0 || this.curDropGridList.length !== blockList.length) {
             return false;
         }
 
         // 检测放下的格子是否已经有方块
-        for (let i = 0; i < this.gridItemList.length; i++) {
-            if (this.gridItemList[i].isHaveBlock) {
+        for (let i = 0; i < this.curDropGridList.length; i++) {
+            if (this.curDropGridList[i].isHaveBlock) {
                 return false;
             }
         }
@@ -517,9 +622,9 @@ cc.Class({
             return;
         }
 
-        for (let i = 0; i < this.blockItemList.length; i++) {
-            let blockItem = this.blockItemList[i];
-            let gridItem = this.gridItemList[i];
+        for (let i = 0; i < this.curDragItemList.length; i++) {
+            let blockItem = this.curDragItemList[i];
+            let gridItem = this.curDropGridList[i];
 
             blockItem.x = 0;
             blockItem.y = 0;
@@ -555,7 +660,7 @@ cc.Class({
      */
     putItemBack () {
         //变色处理
-        this.gridItemList = []; //清空数组
+        this.curDropGridList = []; //清空数组
         this.changeColorDeal();
 
         this.previewNode.x = this.previewNode.ox;

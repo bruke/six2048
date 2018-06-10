@@ -83,7 +83,9 @@ cc.Class({
         let config = this._configLists;
 
         //随机样子
-        let randomIndex = Util.random(0, config.length - 1);
+        //let randomIndex = Util.random(0, config.length - 1);
+        let randomIndex = 0;  // Test 固定生成1个方便测试
+
         let posList = config[randomIndex];
 
         randomIndex = Util.random(1, 4);
