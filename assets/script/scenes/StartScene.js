@@ -22,18 +22,8 @@ cc.Class({
     onBtnGameStart (evt) {
         let button = evt.target;
 
-        let action = cc.sequence(
-            cc.scaleTo(0.2, 0),
-            cc.callFunc(function(){
-                //cc.log("开始游戏");
-                cc.director.loadScene("gameScene");
-                this.node.destroy()
-            }, this)
-        );
-
-        let anim = button.getComponent(cc.Animation);
-        anim.stop();
-        button.runAction(action);
+        cc.director.loadScene("gameScene");
+        this.node.destroy();
 
         cc.audioEngine.playEffect(this.btnSound)
     },

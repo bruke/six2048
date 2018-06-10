@@ -100,8 +100,8 @@
     },
     "_rotationX": 0,
     "_rotationY": 0,
-    "_scaleX": 1,
-    "_scaleY": 1,
+    "_scaleX": 0.7,
+    "_scaleY": 0.7,
     "_position": {
       "__type__": "cc.Vec2",
       "x": 0,
@@ -133,8 +133,6 @@
       "__id__": 1
     },
     "_enabled": true,
-    "liubianxingH": 28,
-    "liubianxingA": 32,
     "blockPrefab": {
       "__uuid__": "f677c0b2-e126-4863-a42f-e0be25f94912"
     },

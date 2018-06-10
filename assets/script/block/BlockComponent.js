@@ -9,9 +9,6 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        liubianxingH: 0,
-        liubianxingA: 0,
-
         blockPrefab: {
             default: null,
             type: cc.Prefab,
@@ -43,17 +40,17 @@ cc.Class({
     // update (dt) {},
 
     initBlockConfig () {
-        let a = this.liubianxingA;
-        let h = this.liubianxingH;
+        let a = 80;
+        let h = 80;
 
         this._configLists = [
             //单个
             [cc.p(0, 0)],
 
             //两个
-            [cc.p(0, 0), cc.p(h * 2, 0)],    // 横摆
-            [cc.p(0, 0), cc.p(h, a * 1.5)],  // 正斜
-            [cc.p(0, 0), cc.p(h, -a * 1.5)], // 反斜
+            [cc.p(0, 0), cc.p(h * 1.8, 0)],    // 横摆
+            [cc.p(0, 0), cc.p(h, a * 1.6)],  // 正斜
+            [cc.p(0, 0), cc.p(h, -a * 1.6)], // 反斜
         ];
     },
 
@@ -135,6 +132,7 @@ cc.Class({
             return;
         }
 
+        /**/
         let block0 = this.blockList[0];
         let block1 = this.blockList[1];
 
@@ -153,6 +151,29 @@ cc.Class({
         block0.runAction(action0);
         block1.runAction(action1);
 
+
+        /*
+        let block0 = this.blockList[0];
+        let block1 = this.blockList[1];
+
+        let rotate = cc.rotateBy(0.5, -180);
+        block0.runAction(rotate);
+        block1.runAction(rotate.clone());
+
+        let action = cc.sequence(cc.rotateBy(0.5, 180), cc.callFunc(function () {
+            this.isRotating = false;
+        }, this));
+
+        this.node.runAction(action);
+        */
+
         this.isRotating = true;
-    }
+    },
+
+    resetRotate () {
+        this.node.setRotation(0);
+
+        this.blockList[0].setRotation(0);
+        this.blockList[1].setRotation(0);
+    },
 });

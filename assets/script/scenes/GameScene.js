@@ -4,7 +4,7 @@
 const Util = require('Util');
 
 const BasicLineNum = 4;  // 网格基础行格子数量
-const scaleParam   = 0.7;
+const scaleParam   = 1;
 
 let theScore = 0;
 
@@ -28,18 +28,6 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        liubianxingH: 0,
-        liubianxingA: 0,
-
-        framePic: {
-            default: null,
-            type: cc.SpriteFrame,
-        },
-
-        bian: {
-            default: null,
-            type: cc.SpriteFrame,
-        },
 
         clearSound: {
             default: null,
@@ -126,7 +114,6 @@ cc.Class({
 
         this.curPreviewBlockGroup = null;
 
-        this.initGridOriginPos();
         this.initEventHandlers();
     },
 
@@ -139,66 +126,15 @@ cc.Class({
         this.addPreviewTouchEvent();
     },
 
-    initGridOriginPos () {
-        //位置表
-        let srcPos = cc.p(this.node.x, this.node.y);
-        let posList = [
-            //第一行的位置信息
-            {
-                count: BasicLineNum,
-                srcPos: cc.p(0, 0)
-            },
-
-            //第二行的位置信息
-            {
-                count: BasicLineNum + 1,
-                srcPos: cc.p(2 * this.liubianxingH, 0)
-            },
-
-            //第三行的位置信息
-            {
-                count: BasicLineNum + 2,
-                srcPos: cc.p(2 * this.liubianxingH * 2, 0)
-            },
-
-            //第四行的位置信息
-            {
-                count: BasicLineNum + 3,
-                srcPos: cc.p(2 * this.liubianxingH * 3, 0)
-            },
-
-            //第五行的位置信息
-            {
-                count: BasicLineNum + 2,
-                srcPos: cc.p(2 * this.liubianxingH * 3.5, (-3 * this.liubianxingA) / 2)
-            },
-
-            //第六行的位置信息
-            {
-                count: BasicLineNum + 1,
-                srcPos: cc.p(2 * this.liubianxingH * 3.5 + this.liubianxingH, (-3 * this.liubianxingA * 2) / 2)
-            },
-
-            //第七行的位置信息
-            {
-                count: BasicLineNum,
-                srcPos: cc.p(2 * this.liubianxingH * 3.5 + this.liubianxingH * 2, (-3 * this.liubianxingA * 3) / 2)
-            },
-        ];
-
-        this.posList = posList;
-    },
-
     addPreviewTouchEvent () {
-        let upH = 100;
-        let self = this;
-
+        //
         this.previewNode.ox = this.previewNode.x;
         this.previewNode.oy = this.previewNode.y;
 
+        let self = this;
+
         this.previewNode.on(cc.Node.EventType.TOUCH_START, function() {
-            //this.previewNode.y += upH;
-            this.previewGridComp.getComponent('BlockComponent').setScale(1);
+            //this.previewGridComp.getComponent('BlockComponent').setScale(1);
             cc.audioEngine.playEffect(self.anSound);
 
         }, this);
@@ -237,52 +173,29 @@ cc.Class({
     },
 
     initGridNodes () {
-        //位置表
-        let srcPos = cc.p(this.node.x, this.node.y);
-        let posList = this.posList;
-
-        //要加的单位向量
-        let addVec = cc.pMult(cc.pForAngle(240 * (2 * Math.PI / 360)), this.liubianxingH * 2);
-
-        //偏移至源点0，0的向量
-        let pianyiTo0p0Vec = cc.pMult(cc.pForAngle(120 * (2 * Math.PI / 360)), this.liubianxingH * 2 * 4);
-
         let frameList = [];
-        let fPosList  = [];
+        let maxLineNum = 7; // 一行最大数量为7个
 
-        //一列列来生成
-        for (let i = 0; i < posList.length; i++) {
-            let count = posList[i].count; //数量
-            let oneSrcPos = cc.pAdd(posList[i].srcPos, pianyiTo0p0Vec); //起始位置
-            let aimPos = cc.pAdd(srcPos, oneSrcPos); //一条的起始位置
+        let gridIndex = 0;
 
-            for (let j = 0; j < count; j++) {
-                let fPos = cc.pAdd(aimPos, cc.pMult(addVec, j));
-                fPosList.push(fPos);
+        // 一共7行
+        for ( let i = 0; i < 7; i++ ) {
+            let rowName = 'row' + i;
+            let lineItemNum = BasicLineNum + i;  // 每一行的元素个数
+
+            if (lineItemNum > maxLineNum) {
+                lineItemNum = maxLineNum - (lineItemNum - maxLineNum);
             }
-        }
 
-        //初始化
-        for (let index = 0; index < fPosList.length; index++) {
-            let node = new cc.Node("frame");
-            let sprite = node.addComponent(cc.Sprite);
-            sprite.spriteFrame = this["framePic"];
+            for ( let j = 0; j < lineItemNum; j++ ) {
+                let itemName = 'slot' + j;
+                let node = cc.find('Canvas/gameGrid/' + rowName + '/' + itemName);
 
-            node.x = fPosList[index].x;
-            node.y = fPosList[index].y;
+                node.gridIndex = gridIndex;
+                frameList.push(node);
 
-            node.parent = this.node;
-            node.gridIndex = index;  // 网格索引, 参加文件头部网格索引定义
-
-            //加边
-            let picNode = new cc.Node("bianSpr");
-            let spr = picNode.addComponent(cc.Sprite);
-
-            spr.spriteFrame = this["bian"];
-            picNode.active = false;
-            picNode.parent = node;
-
-            frameList.push(node);
+                gridIndex++;
+            }
         }
 
         this.frameList = frameList;
@@ -299,37 +212,59 @@ cc.Class({
     },
 
     /**
+     * 获得指定网格位置的所有相邻格子坐标
+     * @param gridIndex
+     */
+    getAllNeighborIndex (gridIndex) {
+        //      [0,  1,  2,  3],
+        //     [4,  5,  6,  7,  8],
+        //   [9, 10, 11, 12, 13, 14],
+        //[15, 16, 17, 18, 19, 20, 21],
+        //   [22, 23, 24, 25, 26, 27],
+        //      [28, 29, 30, 31, 32],
+        //        [33, 34, 35, 36]
+
+        let blockComp = this.previewGridComp.getComponent('BlockComponent');
+        let blockList = blockComp.getAllBlocks();
+
+        let gridItemList = this.blockItemList;
+    },
+
+    /**
+     * 获得与指定位置上连续相邻的网格坐标集合
+     * @param gridIndex
+     * @param blockScore
+     */
+    getContinuesSameBlockIndex (gridIndex, blockScore) {
+        let result = [];
+
+        this.getAllNeighborIndex(gridIndex);
+
+        return result;
+    },
+
+    /**
      * 消除检测
      */
-    checkEliminate: function(evt) {
-        //放下都加分
-        this.addScore(this.curBlockNum, true);
-
-        //加分飘字
-        let tipNode = cc.instantiate(this.tipPrefab);
-        tipNode.color = cc.color(211, 70, 50, 255);
-
-        let label = tipNode.getComponent(cc.Label);
-        label.string = "+" + this.getAddScoreCal(this.curBlockNum, true);
-        this.node.addChild(tipNode);
-
-        let haveFKIndexList = [];
+    checkEliminate (evt) {
+        let blockIndexList = [];
 
         for (let i = 0; i < this.frameList.length; i++) {
             if (this.frameList[i].isHaveBlock) {
-                haveFKIndexList.push(this.frameList[i].gridIndex);
+                blockIndexList.push(this.frameList[i].gridIndex);
             }
         }
 
-        haveFKIndexList.sort(function(a, b) {
+        blockIndexList.sort(function(a, b) {
             return a - b;
         });
 
         let eliminateList = []; //要消除的方块列表
 
+        /* */
         for (let i = 0; i < disList.length; i++) {
             let oneList = disList[i];
-            let intersectAry = this.get2AryIntersect(haveFKIndexList, oneList);
+            let intersectAry = this.get2AryIntersect(blockIndexList, oneList);
 
             if (intersectAry.length > 0) {
                 let needClear = this.check2AryIsEqual(oneList, intersectAry);
@@ -338,6 +273,20 @@ cc.Class({
                 }
             }
         }
+
+
+        /*
+        // added by bruke 20180610
+        for (let i = 0; i < this.blockItemList.length; i++) {
+            let blockItem = this.blockItemList[i];
+            let blockComp = blockItem.getComponent('BlockItem');
+            let gridIndex = blockItem.gridIndex;
+
+            let result = this.getContinuesSameBlockIndex(gridIndex, blockComp.scoreNum);
+        }
+        */
+
+        // end bruke
 
         // 消除表现特效
         if (eliminateList.length > 0) {
@@ -424,12 +373,8 @@ cc.Class({
         }
 
         let node = this.previewNode;
-
-        node.opacity = 255;
-
         if ( this.checkValidPutPosition() ) {
             //cc.log("已经无处安放")
-            node.opacity = 125;
             this.showLoseEffect();
         }
     },
@@ -437,8 +382,6 @@ cc.Class({
     //检测自身是否已经无处可放
     checkValidPutPosition () {
         let canDropCount = 0;
-        //let children = this.previewNode.children[0].children;
-
         let curPreviewBlocks = this.curPreviewBlockGroup;
         let blockComp = curPreviewBlocks.getComponent('BlockComponent');
         let blockList = blockComp.getAllBlocks();
@@ -482,7 +425,7 @@ cc.Class({
         //
         for (let i = 0; i < this.frameList.length; i++) {
             let guangPicNode = this.frameList[i].getChildByName("bianSpr");
-            guangPicNode.active = false;
+            //guangPicNode.active = false;
         }
 
         // 如果参数有值，直接返回，不做下面的
@@ -492,7 +435,7 @@ cc.Class({
 
         for (let i = 0; i < this.gridItemList.length; i++) {
             let guangPicNode = this.gridItemList[i].getChildByName("bianSpr");
-            guangPicNode.active = true;
+            //guangPicNode.active = true;
         }
     },
 
@@ -500,8 +443,8 @@ cc.Class({
     //碰撞逻辑
     collisionFunc () {
         //
-        this.gridItemList = []; //清空数组
-        this.blockItemList = [];    //清空数组
+        this.gridItemList = [];
+        this.blockItemList = [];
 
         let curPreviewBlocks = this.curPreviewBlockGroup;
         let blockComp = curPreviewBlocks.getComponent('BlockComponent');
@@ -509,31 +452,34 @@ cc.Class({
 
         for (let i = 0; i < blockList.length; i++) {
             let block = blockList[i];
-            let offsetPos = cc.pAdd(cc.p(curPreviewBlocks.x, curPreviewBlocks.y), cc.p(block.x, block.y));
-            let childPos = cc.pAdd(this.previewNode.position, offsetPos);
-            let frame = this.checkPosFunc(childPos);
+            let blockPos = block.parent.convertToWorldSpaceAR(block.position);
+            let gridItem = this.checkPosFunc(blockPos);
 
-            if (frame) {
+            if (gridItem) {
                 this.blockItemList.push(block);
-                this.gridItemList.push(frame)
+                this.gridItemList.push(gridItem)
             }
         }
     },
 
 
     // 一个点和棋盘的所有框检测
-    checkPosFunc (pos) {
-        let len = 27; // 碰撞距离 - 格子中心点到边界的距离, 把六边形近似为一个圆形
+    checkPosFunc (worldPos) {
+        let triggerLen = 50; // 碰撞距离 - 格子中心点到边界的距离, 把六边形近似为一个圆形
+        let gameGrid = cc.find('Canvas/gameGrid');
+        let tarGridItem = null;
 
         for (let i = 0; i < this.frameList.length; i++) {
-            let frameNode = this.frameList[i];
-            let dis = cc.pDistance(cc.p(frameNode.x, frameNode.y), pos);
+            let gridItem = this.frameList[i];
+            let gridPos = gridItem.parent.convertToWorldSpaceAR(gridItem.position);
+            let distance = cc.pDistance(gridPos, worldPos);
 
-            if (dis <= len) {
-                return frameNode;
+            if (distance <= triggerLen) {
+                tarGridItem = gridItem;
+                break;
             }
         }
-        return null;
+        return tarGridItem;
     },
 
     //检测是否能够放下
@@ -567,20 +513,20 @@ cc.Class({
         }
 
         for (let i = 0; i < this.blockItemList.length; i++) {
-            this.blockItemList[i].x = 0;
-            this.blockItemList[i].y = 0;
+            let blockItem = this.blockItemList[i];
+            let gridItem = this.gridItemList[i];
 
-            this.blockItemList[i].parent = this.gridItemList[i];  // 方块添加到对应到网格上
-            this.gridItemList[i].isHaveBlock = true;
+            blockItem.x = 0;
+            blockItem.y = 0;
+            blockItem.parent = gridItem;  // 方块添加到对应到网格上
+            blockItem.gridIndex = gridItem.gridIndex;
 
-            // 落地特效
-            //this.landingEffect();
+            gridItem.isHaveBlock = true;
         }
 
         // 生成下一个
         this.createNextNode();
 
-        this.curBlockNum = this.blockItemList.length;
         this.node.emit('succDropDownOne');
 
         let ranC = Util.random(1, 3);
@@ -597,18 +543,6 @@ cc.Class({
      * 落地特效
      */
     landingEffect () {
-        let picNode = new cc.Node("guangEffNode");
-        let spr = picNode.addComponent(cc.Sprite);
-
-        spr.spriteFrame = this["bian"];
-        this.gridItemList[i].addChild(picNode, -1);
-
-        let action = cc.repeatForever(cc.sequence(
-            cc.spawn(cc.fadeOut(1), cc.scaleTo(1, 1.2)),
-            cc.removeSelf()
-        ));
-
-        picNode.runAction(action);
     },
 
     /**
@@ -618,8 +552,6 @@ cc.Class({
         //变色处理
         this.gridItemList = []; //清空数组
         this.changeColorDeal();
-
-        this.previewGridComp.getComponent('BlockComponent').setScale(scaleParam);
 
         this.previewNode.x = this.previewNode.ox;
         this.previewNode.y = this.previewNode.oy;
@@ -695,7 +627,7 @@ cc.Class({
 
     // 读取历史最高分
     initHiScore () {
-        let node = cc.find('Canvas/highScore/scoreLabel');
+        let node = cc.find('Canvas/scoreNode/scoreLabel');
         let label = node.getComponent(cc.Label);
 
         label.string = cc.sys.localStorage.getItem("score") || 0;
