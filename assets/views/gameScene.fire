@@ -4095,7 +4095,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 550,
+      "width": 480,
       "height": 100
     },
     "_rotationX": 0,
@@ -4124,9 +4124,9 @@
     "_enabled": true,
     "_N$string": "<color=#DF00F1>小贴士：</c><color=#ffffff>在连续合成时，只需要两个及以上的相同数字相连，即可合成更高数字</color>",
     "_N$horizontalAlign": 1,
-    "_N$fontSize": 25,
+    "_N$fontSize": 22,
     "_N$font": null,
-    "_N$maxWidth": 550,
+    "_N$maxWidth": 480,
     "_N$lineHeight": 50,
     "_N$imageAtlas": null,
     "_N$handleTouchEvent": true
@@ -4219,8 +4219,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 50,
-      "height": 40
+      "width": 100,
+      "height": 99
     },
     "_rotationX": 0,
     "_rotationY": 0,
@@ -4228,8 +4228,8 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 13,
-      "y": 23
+      "x": -16,
+      "y": 52
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -4247,7 +4247,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "1e1a1f89-1ba3-4d5b-a99f-69172239b8e2"
+      "__uuid__": "b67ff69c-20a5-4435-b59c-832afc130d98"
     },
     "_type": 1,
     "_sizeMode": 0,
@@ -4262,9 +4262,7 @@
     "_isTrimmedMode": true,
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_atlas": {
-      "__uuid__": "790fb661-4b52-4958-86fb-a373b8ae223c"
-    }
+    "_atlas": null
   },
   {
     "__type__": "cc.Button",
@@ -4274,7 +4272,7 @@
       "__id__": 101
     },
     "_enabled": true,
-    "transition": 2,
+    "transition": 3,
     "pressedColor": {
       "__type__": "cc.Color",
       "r": 255,
@@ -4309,7 +4307,7 @@
       "a": 255
     },
     "_N$normalSprite": {
-      "__uuid__": "1e1a1f89-1ba3-4d5b-a99f-69172239b8e2"
+      "__uuid__": "b67ff69c-20a5-4435-b59c-832afc130d98"
     },
     "_N$pressedSprite": {
       "__uuid__": "e9ec654c-97a2-4787-9325-e6a10375219a"
