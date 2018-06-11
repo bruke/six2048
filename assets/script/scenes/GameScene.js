@@ -251,30 +251,66 @@ cc.Class({
     },
 
     /**
-     * 获得指定网格位置的所有相邻格子坐标
-     * 一个网格的所有邻居包括左右各一个、和上下各两个共六个
+     * 根据行索引和行内索引计算对应的网格索引
+     * @param row
+     * @param rowIndex
+     * @returns {number}
+     */
+    getGridIndexWithRowIndex (row, rowIndex) {
+        //
+        if (row < 0 ||row >= MaxGridLines) {
+            return -1;
+        }
+
+        let rowIndexList = GridIndexDef[row];
+        if (rowIndex < 0 || rowIndex >= rowIndexList.length) {
+            return -1;
+        }
+
+        //
+        let gridIndex = 0;
+
+        for (let i = 0; i < GridIndexDef.length; i++) {
+            let rowIndexList = GridIndexDef[i];
+
+            if (row === i) {
+                break;
+            }
+
+            gridIndex += rowIndexList.length;
+        }
+
+        gridIndex += rowIndex;
+
+        return gridIndex;
+    },
+
+    /**
+     * 获得指定网格位置的所有邻居的格子坐标
+     * * 一个网格的所有邻居包括左右各一个、和上下各两个共六个
      * 处于边界的元素邻居不足六个
      * @param gridIndex
+     * @returns {Array}
      */
-    getAllNeighborsWithIndex (gridIndex) {
-        //      [0,  1,  2,  3],
-        //     [4,  5,  6,  7,  8],
-        //   [9, 10, 11, 12, 13, 14],
-        //[15, 16, 17, 18, 19, 20, 21],
-        //   [22, 23, 24, 25, 26, 27],
-        //      [28, 29, 30, 31, 32],
-        //        [33, 34, 35, 36]
+    getAllNeighborsGridIndex (gridIndex) {
+        /*
+        const GridIndexDef = [
+                  [0,  1,  2,  3],
+                [4,  5,  6,  7,  8],
+              [9, 10, 11, 12, 13, 14],
+            [15, 16, 17, 18, 19, 20, 21],
+              [22, 23, 24, 25, 26, 27],
+                [28, 29, 30, 31, 32],
+                  [33, 34, 35, 36]
+        ];
+        */
 
-        let blockComp = this.previewGridComp.getComponent('BlockComponent');
-        let newBlockList = blockComp.getAllBlocks();  // 本次新拖入的新块列表 (1个或2个)
-        let gridItemList = this.curDropGridList;         // 所有的网格槽元素
 
-        let neighborBlocks = [];
         let neighborIndexes = [];
 
         let row = this.getRowWithIndex(gridIndex); // 获取所在行
         if (row !== -1) {
-            //let rowIndex = GridIndexDef[row].indexOf(gridIndex); // 获取在行内的位置
+            let rowIndex = GridIndexDef[row].indexOf(gridIndex); // 获取在行内的位置
 
             // 左侧
             let leftIndex = gridIndex - 1;
@@ -285,32 +321,44 @@ cc.Class({
             rightIndex = this.isIndexInRow(rightIndex, row) ? rightIndex : -1;
 
             // 左上
-            let leftTopIndex = gridIndex - (BasicLineNum + row);
-            if (row >= BasicLineNum) {
-                leftTopIndex += Math.abs(row - BasicLineNum);
+            let leftTopRowIndex = -1;  // 行内索引
+            if (row < BasicLineNum) {
+                leftTopRowIndex = rowIndex - 1;
+            } else {
+                leftTopRowIndex = rowIndex;
             }
-            leftTopIndex = this.isIndexInRow(leftTopIndex, row - 1) ? leftTopIndex : -1;
+            // 计算网格索引
+            let leftTopIndex = this.getGridIndexWithRowIndex(row - 1, leftTopRowIndex);
 
             // 右上
-            let rightTopIndex = gridIndex - (BasicLineNum - 1 + row);
-            if (row >= BasicLineNum) {
-                rightTopIndex += Math.abs(row - BasicLineNum);
+            let rightTopRowIndex = -1;  // 行内索引
+            if (row < BasicLineNum) {
+                rightTopRowIndex = rowIndex;
+            } else {
+                rightTopRowIndex = rowIndex + 1;
             }
-            rightTopIndex = this.isIndexInRow(rightTopIndex, row - 1) ? rightTopIndex : -1;
+
+            let rightTopIndex = this.getGridIndexWithRowIndex(row - 1, rightTopRowIndex);
 
             // 左下
-            let leftDownIndex = gridIndex + (BasicLineNum + row);
-            if (row >= BasicLineNum) {
-                leftDownIndex -= Math.abs(row - BasicLineNum);
+            let leftDownRowIndex = -1;
+            if (row < BasicLineNum - 1) {
+                leftDownRowIndex = rowIndex;
+            } else {
+                leftDownRowIndex = rowIndex - 1;
             }
-            leftDownIndex = this.isIndexInRow(leftDownIndex, row + 1) ? leftDownIndex : -1;
+
+            let leftDownIndex = this.getGridIndexWithRowIndex(row + 1, leftDownRowIndex);
 
             // 右下
-            let rightDownIndex = gridIndex + (BasicLineNum + 1 + row);
-            if (row >= BasicLineNum) {
-                rightDownIndex -= Math.abs(row - BasicLineNum);
+            let rightDownRowIndex = -1;
+            if (row < BasicLineNum - 1) {
+                rightDownRowIndex = rowIndex + 1;
+            } else {
+                rightDownRowIndex = rowIndex;
             }
-            rightDownIndex = this.isIndexInRow(rightDownIndex, row + 1) ? rightDownIndex : -1;
+
+            let rightDownIndex = this.getGridIndexWithRowIndex(row + 1, rightDownRowIndex);
 
             //
             neighborIndexes = [leftIndex, rightIndex, leftTopIndex, rightTopIndex, leftDownIndex, rightDownIndex];
@@ -326,14 +374,39 @@ cc.Class({
             return index >= 0 && index < TotalGridsNum;
         });
 
-        //
-        if (neighborIndexes.length > 0) {
+        return neighborIndexes;
+    },
 
+    /**
+     * 获得指定网格位置的所有相邻格子对象
+     * 一个网格的所有邻居包括左右各一个、和上下各两个共六个
+     * 处于边界的元素邻居不足六个
+     * @param gridIndex
+     */
+    getAllNeighborsWithIndex (gridIndex) {
+        let neighborBlocks = [];
+        let neighborsGridIndex = this.getAllNeighborsGridIndex(gridIndex);
+
+        let blockComp = this.previewGridComp.getComponent('BlockComponent');
+        //let newBlockList = blockComp.getAllBlocks();  // 本次新拖入的新块列表 (1个或2个)
+        //let gridItemList = this.curDropGridList;      // 本次拖入块元素所在的网格槽元素
+
+        for (let i = 0; i < this.gridItemList.length; i++) {
+            let gridItem = this.gridItemList[i];
+            let tmpGridIndex = gridItem.gridIndex;
+
+            if (neighborsGridIndex.indexOf(tmpGridIndex) >= 0 /*&& gridItem.isHaveBlock*/) {
+                //gridItem.runAction(cc.blink(1, 3));  // TEST
+
+                if (gridItem.isHaveBlock) {
+                    //gridItem.runAction(cc.blink(1, 3));  // TEST
+                    //neighborBlocks.push();
+                }
+            }
         }
 
         return neighborBlocks;
     },
-
 
     /**
      * 获得与指定位置上连续相邻的网格坐标集合
