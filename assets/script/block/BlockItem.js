@@ -68,25 +68,28 @@ cc.Class({
             }
         },
 
-        _scoreNum: 2,  // 块上数字， 默认开始为2
+        _scoreNum: -1,  // 块上数字
     },
 
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
         this._scoreDict = [2, 4, 8, 16, 32, 64, 128, 512/*, 1024, 2048*/];
+
+        this.initScoreNum();
     },
 
     start () {
-        // Test
-        let index = Util.random(0, this._scoreDict.length);
-        this._scoreNum = this._scoreDict[index];
-
-        this.updateBlock();
-        // Test
     },
 
     // update (dt) {},
+
+    initScoreNum () {
+        let index = Util.random(0, this._scoreDict.length - 1);
+        this._scoreNum = this._scoreDict[index];
+
+        this.updateBlock();
+    },
 
     updateBlock () {
         let spriteFrame = this['imgframe' + this._scoreNum];

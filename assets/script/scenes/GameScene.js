@@ -387,7 +387,7 @@ cc.Class({
         let neighborBlocks = [];
         let neighborsGridIndex = this.getAllNeighborsGridIndex(gridIndex);
 
-        let blockComp = this.previewGridComp.getComponent('BlockComponent');
+        //let blockComp = this.previewGridComp.getComponent('BlockComponent');
         //let newBlockList = blockComp.getAllBlocks();  // 本次新拖入的新块列表 (1个或2个)
         //let gridItemList = this.curDropGridList;      // 本次拖入块元素所在的网格槽元素
 
@@ -400,7 +400,8 @@ cc.Class({
 
                 if (gridItem.isHaveBlock) {
                     //gridItem.runAction(cc.blink(1, 3));  // TEST
-                    //neighborBlocks.push();
+                    let blockItem = gridItem.getChildByName("BlockItem");
+                    neighborBlocks.push(blockItem);
                 }
             }
         }
@@ -410,14 +411,32 @@ cc.Class({
 
     /**
      * 获得与指定位置上连续相邻的网格坐标集合
-     * @param gridIndex
-     * @param blockScore
+     * @param blockItem
      */
-    getContinuesSameBlockIndex (gridIndex, blockScore) {
+    getContinuesSameBlockIndex (blockItem) {
         let result = [];
 
+        let blockComp = blockItem.getComponent('BlockItem');
+        let gridIndex = blockItem.gridIndex;
+        let blockScore = blockComp.scoreNum;
+
+        // 先找到所有的邻居块
         let neighbors = this.getAllNeighborsWithIndex(gridIndex);
 
+        // 过滤保留相同数字的块
+        neighbors = neighbors.filter(function (item) {
+            let itemComp = item.getComponent('BlockItem');
+            return itemComp.scoreNum === blockScore;
+        });
+
+        // TEST
+        neighbors.forEach(function (item) {
+            item.runAction(cc.blink(1, 3));
+        });
+        // TEST
+
+
+        //
         return result;
     },
 
@@ -439,28 +458,11 @@ cc.Class({
 
         let eliminateList = []; //要消除的方块列表
 
-        /*
-        for (let i = 0; i < GridIndexDef.length; i++) {
-            let oneList = GridIndexDef[i];
-            let intersectAry = this.get2AryIntersect(blockIndexList, oneList);
-
-            if (intersectAry.length > 0) {
-                let needClear = this.check2AryIsEqual(oneList, intersectAry);
-                if (needClear) {
-                    eliminateList.push(oneList);
-                }
-            }
-        }
-         */
-
         /**/
         // added by bruke 20180610
         for (let i = 0; i < this.curDragItemList.length; i++) {
             let blockItem = this.curDragItemList[i];
-            let blockComp = blockItem.getComponent('BlockItem');
-            let gridIndex = blockItem.gridIndex;
-
-            let result = this.getContinuesSameBlockIndex(gridIndex, blockComp.scoreNum);
+            let result = this.getContinuesSameBlockIndex(blockItem);
         }
 
 
