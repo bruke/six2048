@@ -74,7 +74,10 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-        this._scoreDict = [2, 4, 8, 16, 32, 64, 128, 512/*, 1024, 2048*/];
+        this._scoreDict = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
+
+        // 生成块最大到512
+        this._maxInitIndex = this._scoreDict.indexOf(512);
 
         this.initScoreNum();
     },
@@ -84,8 +87,12 @@ cc.Class({
 
     // update (dt) {},
 
+    isTopScore () {
+        return this._scoreNum === 2048;
+    },
+
     initScoreNum () {
-        let index = Util.random(0, this._scoreDict.length - 1);
+        let index = Util.random(0, this._maxInitIndex);
         this._scoreNum = this._scoreDict[index];
 
         this.updateBlock();
@@ -97,4 +104,16 @@ cc.Class({
             this.blockImg.spriteFrame = spriteFrame;
         }
     },
+
+    upgrade () {
+        if (this.isTopScore()) {
+            return false;
+        }
+
+        let index = this._scoreDict.indexOf(this._scoreNum);
+
+        this.scoreNum = this._scoreDict[index + 1];
+
+        return true;
+    }
 });

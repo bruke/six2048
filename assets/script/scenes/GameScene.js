@@ -116,7 +116,11 @@ cc.Class({
 
         this.findContinuesList = [];
 
+        this.eliminateList = []; //要消除的方块列表
+
         this.curPreviewBlockGroup = null;
+
+        this.isEliminating = false;  // 是否有消除动作正在进行中
 
         this.initEventHandlers();
     },
@@ -203,6 +207,23 @@ cc.Class({
         }
 
         this.gridItemList = frameList;
+    },
+
+    // 读取历史最高分
+    initHiScore () {
+        let node = cc.find('Canvas/scoreNode/scoreLabel');
+        let label = node.getComponent(cc.Label);
+
+        label.string = cc.sys.localStorage.getItem("score") || 0;
+    },
+
+    // 保存历史最高分
+    saveHiScore (score) {
+        let oldScore = cc.sys.localStorage.getItem("score");
+
+        if (oldScore < score) {
+            cc.sys.localStorage.setItem("score", score);
+        }
     },
 
     createNextNode () {
@@ -447,13 +468,6 @@ cc.Class({
             }
         }
 
-        // TEST
-        //neighbors.forEach(function (item) {
-        //    item.runAction(cc.blink(1, 3));
-        //});
-        // TEST
-
-
         //
         return result;
     },
@@ -474,33 +488,35 @@ cc.Class({
             return a - b;
         });
 
-        let eliminateList = []; //要消除的方块列表
-
-        /**/
-        // added by bruke 20180610
+        //
         for (let i = 0; i < this.curDragItemList.length; i++) {
             //
             this.findContinuesList.length = 0;  // 必须清空
 
             let blockItem = this.curDragItemList[i];
-            let result = this.getContinuesSameBlockIndex(blockItem);
+            //let result = this.getContinuesSameBlockIndex(blockItem);
+            this.getContinuesSameBlockIndex(blockItem);
 
             // TEST
-            this.findContinuesList.forEach(function (item) {
-                item.runAction(cc.blink(1, 3));
-            });
+            //this.findContinuesList.forEach(function (item) {
+            //    item.runAction(cc.blink(1, 3));
+            //});
             // TEST
+
+            //if (result.length >= 3) {
+            // 特别注意：这里要用this.findContinuesList！！！！
+            if (this.findContinuesList.length >= 3) {
+                this.eliminateList.push(this.findContinuesList);
+
+                blockItem.needUpgrade = true; // 标记升级块
+            }
         }
-
-
-        // end bruke
 
         // 消除表现特效
-        if (eliminateList.length > 0) {
-            this.doEliminate(eliminateList);
-
-            cc.audioEngine.playEffect(this.clearSound);
-        }
+        //if (this.eliminateList.length > 0) {
+        //    this.doEliminate(eliminateList);
+        //    cc.audioEngine.playEffect(this.clearSound);
+        //}
     },
 
     doEliminate (eliminateList) {
@@ -837,22 +853,50 @@ cc.Class({
         return true
     },
 
-    // 读取历史最高分
-    initHiScore () {
-        let node = cc.find('Canvas/scoreNode/scoreLabel');
-        let label = node.getComponent(cc.Label);
+    updateElimination () {
+        if (this.isEliminating) {
+            return;
+        }
 
-        label.string = cc.sys.localStorage.getItem("score") || 0;
-    },
+        if (this.eliminateList.length > 0) {
 
-    // 保存历史最高分
-    saveHiScore (score) {
-        let oldScore = cc.sys.localStorage.getItem("score");
-
-        if (oldScore < score) {
-            cc.sys.localStorage.setItem("score", score);
+            this.doEliminationOnce(this.eliminateList.shift());
         }
     },
+
+    doEliminationOnce (blocks) {
+        //
+        this.isEliminating = true;
+
+        //
+        blocks.forEach(function(item) {
+            //
+            if (!item.needUpgrade) {
+                this.gridItemList[item.gridIndex].isHaveBlock = false;
+                item.removeFromParent(true);
+
+            } else {
+                let itemComp = item.getComponent('BlockItem');
+                itemComp.upgrade();
+
+                if (itemComp.isTopScore()) {
+                    // 到达2048后爆炸
+                    cc.log('itemComp.isTopScore');
+                }
+
+                item.needUpgrade = false;
+            }
+
+
+            this.isEliminating = false;
+        }, this);
+
+        cc.audioEngine.playEffect(this.clearSound);
+    },
+
+    update () {
+        this.updateElimination();
+    }
 
 });
 
