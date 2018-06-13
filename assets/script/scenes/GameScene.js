@@ -114,6 +114,8 @@ cc.Class({
         this.curDropGridList  = [];   // 当前拖动预览方块放置到网格上对应网格对象
         this.curBlockListInGrid = []; // 当前网格上已有的所有数字块
 
+        this.findContinuesList = [];
+
         this.curPreviewBlockGroup = null;
 
         this.initEventHandlers();
@@ -387,10 +389,6 @@ cc.Class({
         let neighborBlocks = [];
         let neighborsGridIndex = this.getAllNeighborsGridIndex(gridIndex);
 
-        //let blockComp = this.previewGridComp.getComponent('BlockComponent');
-        //let newBlockList = blockComp.getAllBlocks();  // 本次新拖入的新块列表 (1个或2个)
-        //let gridItemList = this.curDropGridList;      // 本次拖入块元素所在的网格槽元素
-
         for (let i = 0; i < this.gridItemList.length; i++) {
             let gridItem = this.gridItemList[i];
             let tmpGridIndex = gridItem.gridIndex;
@@ -427,12 +425,32 @@ cc.Class({
         neighbors = neighbors.filter(function (item) {
             let itemComp = item.getComponent('BlockItem');
             return itemComp.scoreNum === blockScore;
-        });
+        }, this);
+
+        // 过滤已经标记查询的块
+        neighbors = neighbors.filter(function (item) {
+            //let itemComp = item.getComponent('BlockItem');
+            return this.findContinuesList.indexOf(item) === -1;
+        }, this);
+
+        //
+        this.findContinuesList = this.findContinuesList.concat(neighbors);
+
+        // 继续递归查找
+        if (neighbors.length > 0) {
+            for (let i = 0; i < neighbors.length; i++) {
+                //
+                let nextNeighbors = this.getContinuesSameBlockIndex(neighbors[i]);
+                if (nextNeighbors.length > 0) {
+                    result = result.concat(nextNeighbors);
+                }
+            }
+        }
 
         // TEST
-        neighbors.forEach(function (item) {
-            item.runAction(cc.blink(1, 3));
-        });
+        //neighbors.forEach(function (item) {
+        //    item.runAction(cc.blink(1, 3));
+        //});
         // TEST
 
 
@@ -461,8 +479,17 @@ cc.Class({
         /**/
         // added by bruke 20180610
         for (let i = 0; i < this.curDragItemList.length; i++) {
+            //
+            this.findContinuesList.length = 0;  // 必须清空
+
             let blockItem = this.curDragItemList[i];
             let result = this.getContinuesSameBlockIndex(blockItem);
+
+            // TEST
+            this.findContinuesList.forEach(function (item) {
+                item.runAction(cc.blink(1, 3));
+            });
+            // TEST
         }
 
 
