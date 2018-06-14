@@ -82,9 +82,9 @@ cc.Class({
         let blockRoot = this.blockRoot;
         let config = this._configLists;
 
-        //随机样子
-        //let randomIndex = Util.random(0, config.length - 1);
-        let randomIndex = 0;  // Test 固定生成1个方便测试
+        //随机一个或两个
+        let randomIndex = Util.random(0, config.length - 1);
+        //let randomIndex = 0;  // Test 固定生成1个方便测试
 
         let posList = config[randomIndex];
 
@@ -126,7 +126,7 @@ cc.Class({
     },
 
     /**
-     * 旋转90度
+     * 旋转互换位置
      */
     rotateOnce () {
         // 临时写一个直接交换的动作, 后续优化要做成圆周动作
@@ -134,9 +134,16 @@ cc.Class({
             return;
         }
 
-        /**/
         let block0 = this.blockList[0];
         let block1 = this.blockList[1];
+
+        // 如果两个块数字相同，就不用互换位置了
+        let blockComp0 = block1.getComponent('BlockItem');
+        //let blockComp1 = block1.getComponent('BlockItem');
+
+        if (blockComp0.equalWith(block1) ) {
+            return;
+        }
 
         let pos0 = block0.position;
         let pos1 = block1.position;
@@ -146,8 +153,8 @@ cc.Class({
             this.isRotating = false;
 
             // 交换
-            this.blockList[0] = block1;
-            this.blockList[1] = block0;
+            //this.blockList[0] = block1;
+            //this.blockList[1] = block0;
         } ,this));
 
         block0.runAction(action0);

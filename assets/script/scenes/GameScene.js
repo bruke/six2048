@@ -473,6 +473,18 @@ cc.Class({
     },
 
     /**
+     * 检查两个块元素是否相等 --- 熟悉相同即为相等
+     * @param blockItem0
+     * @param blockItem1
+     * @returns {boolean}
+     */
+    isTwoEqualBlocks (blockItem0, blockItem1) {
+        // 如果两个块数字相同，就不用互换位置了
+        let blockComp = blockItem0.getComponent('BlockItem');
+        return blockComp.equalWith(blockItem1);
+    },
+
+    /**
      * 消除检测
      */
     checkEliminate (evt) {
@@ -489,11 +501,20 @@ cc.Class({
         });
 
         //
-        for (let i = 0; i < this.curDragItemList.length; i++) {
+        let checkItemList = this.curDragItemList.slice(0);
+
+        // 如果是两个相同数字的块，保留一个就可以了
+        // 以为该两个块必定是相邻的, 一定能被遍历到
+        if ( checkItemList.length === 2 && this.isTwoEqualBlocks(checkItemList[0], checkItemList[1]) ) {
+            checkItemList.splice(0, 1);
+        }
+
+        //
+        for (let i = 0; i < checkItemList.length; i++) {
             //
             this.findContinuesList.length = 0;  // 必须清空
 
-            let blockItem = this.curDragItemList[i];
+            let blockItem = checkItemList[i];
             //let result = this.getContinuesSameBlockIndex(blockItem);
             this.getContinuesSameBlockIndex(blockItem);
 
@@ -506,83 +527,10 @@ cc.Class({
             //if (result.length >= 3) {
             // 特别注意：这里要用this.findContinuesList！！！！
             if (this.findContinuesList.length >= 3) {
-                this.eliminateList.push(this.findContinuesList);
+                this.eliminateList.push(this.findContinuesList.slice(0));  // 一定要复制一份
 
                 blockItem.needUpgrade = true; // 标记升级块
             }
-        }
-
-        // 消除表现特效
-        //if (this.eliminateList.length > 0) {
-        //    this.doEliminate(eliminateList);
-        //    cc.audioEngine.playEffect(this.clearSound);
-        //}
-    },
-
-    doEliminate (eliminateList) {
-        let actionAry = [];
-
-        // 消除
-        let count = 0;
-        for (let i = 0; i < eliminateList.length; i++) {
-
-            let oneList = eliminateList[i];
-            for (let j = 0; j < oneList.length; j++) {
-                let xIndex = oneList[j];
-
-                // 得分效果
-                actionAry.push(cc.callFunc(function(){
-                    let xIndex = arguments[1][0];
-                    let count = arguments[1][1];
-                    let effNode = cc.instantiate(this.boomEffPrefab);
-
-                    this.gridItemList[xIndex].addChild(effNode);
-
-                    // 加分飘字
-                    let tipNode = cc.instantiate(this.tipPrefab);
-                    let label = tipNode.getComponent(cc.Label);
-
-                    label.string = "+" + this.getAddScoreCal(count);
-                    this.gridItemList[xIndex].addChild(tipNode);
-                }, this, [xIndex, count]));
-
-                // 放大、渐隐消除效果
-                actionAry.push(cc.callFunc(function() {
-                    let xIndex = arguments[1];
-                    this.gridItemList[xIndex].isHaveBlock = false;
-
-                    let blockNode = this.gridItemList[xIndex].getChildByName("BlockItem");
-                    if (!blockNode) {
-                        return; //防止没有这个方块的时候
-                    }
-
-                    blockNode.cascadeOpacity = true;
-
-                    //这个假方块变大并且渐隐掉
-                    blockNode.runAction(cc.sequence(
-                        cc.spawn(cc.scaleTo(0.5, 2), cc.fadeOut(0.5)),
-                        cc.removeSelf(true)
-                    ))
-
-                }, this, xIndex));
-
-                actionAry.push(cc.delayTime(0.1));
-                count++;
-            }
-        }
-
-        if (actionAry.length > 0) {
-            actionAry.push(cc.callFunc(function() {
-                this.isDeleting = false;
-                this.checkIsLose();
-            }, this));
-
-            this.isDeleting = true;
-            let action = cc.sequence(actionAry);
-            this.node.runAction(action);
-
-            // 加分
-            this.addScore(count);
         }
     },
 
@@ -873,9 +821,18 @@ cc.Class({
             //
             if (!item.needUpgrade) {
                 this.gridItemList[item.gridIndex].isHaveBlock = false;
-                item.removeFromParent(true);
+                //item.removeFromParent(true);
+
+                //这个假方块变大并且渐隐掉
+                item.runAction(cc.sequence(
+                    cc.spawn(cc.scaleTo(0.5, 2), cc.fadeOut(0.5)),
+                    cc.removeSelf(true)
+                ));
 
             } else {
+                //
+                item.needUpgrade = false;
+
                 let itemComp = item.getComponent('BlockItem');
                 itemComp.upgrade();
 
@@ -883,10 +840,7 @@ cc.Class({
                     // 到达2048后爆炸
                     cc.log('itemComp.isTopScore');
                 }
-
-                item.needUpgrade = false;
             }
-
 
             this.isEliminating = false;
         }, this);
