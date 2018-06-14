@@ -120,7 +120,7 @@ cc.Class({
 
         this.curPreviewBlockGroup = null;
 
-        this.isEliminating = false;  // 是否有消除动作正在进行中
+        this._isEliminating = false;  // 是否有消除动作正在进行中
 
         this.initEventHandlers();
     },
@@ -551,14 +551,15 @@ cc.Class({
             this.eliminateList = this.eliminateList.concat(findResult);
 
             // 标记合并升级目标
-            findResult.forEach(function (item) {
-                let itemComp = item.getComponent('BlockItem');
+            findResult.forEach(function (list) {
+                let itemComp = list[0].getComponent('BlockItem');
 
-                for (let j = 0; j < checkItemList.length; j++) {
+                for (let i = 0; i < checkItemList.length; i++) {
                     let checkItem = checkItemList[i];
-                    //let checkComp = checkItem.getComponent('BlockItem');
-                    if (itemComp) {
-
+                    //
+                    if (itemComp.equalWith(checkItem)) {
+                        checkItem.needUpgrade = true; // 标记升级块
+                        break;
                     }
                 }
             }, this);
@@ -834,7 +835,7 @@ cc.Class({
     },
 
     updateElimination () {
-        if (this.isEliminating) {
+        if (this._isEliminating) {
             return;
         }
 
@@ -846,38 +847,61 @@ cc.Class({
 
     doEliminationOnce (blocks) {
         //
-        this.isEliminating = true;
+        this._isEliminating = true;
+        this._eliminateNum = 0;
+        this._upgradeTarget = null;  // 本次合并回合的目标升级块
 
         //
-        blocks.forEach(function(item) {
-            //
+        let action = cc.sequence(
+            cc.spawn(cc.scaleTo(0.5, 2), cc.fadeOut(0.5)),
+            cc.removeSelf(true),
+            cc.callFunc(function () {
+                this._eliminateNum--;
+
+                if (this._eliminateNum === 0) {
+                    // 目标块升级特效
+                    this.upgradeBlock(this._upgradeTarget);
+
+                    // 本次合并升级结束后要检查以本次合成的新块为中心，是否有一个以上连接块 (合并后新块只需两块即可触发下次合并)
+                    // 如果和原计划的下一组合并块相邻则直接合并为一个新的大组，一次合并消除
+
+                    this._isEliminating = false;
+                }
+
+            }, this)
+        );
+
+        //
+        for (let i = 0; i < blocks.length; i++) {
+            let item = blocks[i];
+
             if (!item.needUpgrade) {
                 this.gridItemList[item.gridIndex].isHaveBlock = false;
                 //item.removeFromParent(true);
 
                 //这个假方块变大并且渐隐掉
-                item.runAction(cc.sequence(
-                    cc.spawn(cc.scaleTo(0.5, 2), cc.fadeOut(0.5)),
-                    cc.removeSelf(true)
-                ));
+                item.runAction(action.clone());
+
+                this._eliminateNum++;
 
             } else {
                 //
-                item.needUpgrade = false;
-
-                let itemComp = item.getComponent('BlockItem');
-                itemComp.upgrade();
-
-                if (itemComp.isTopScore()) {
-                    // 到达2048后爆炸
-                    cc.log('itemComp.isTopScore');
-                }
+                this._upgradeTarget = item;
             }
-
-            this.isEliminating = false;
-        }, this);
+        }
 
         cc.audioEngine.playEffect(this.clearSound);
+    },
+
+    /**
+     * 升级一个元素块
+     * @param blockItem
+     */
+    upgradeBlock (blockItem) {
+        let itemComp = blockItem.getComponent('BlockItem');
+        itemComp.upgrade();
+
+        blockItem.needUpgrade = false;
     },
 
     update () {

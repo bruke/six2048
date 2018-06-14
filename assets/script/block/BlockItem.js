@@ -93,6 +93,9 @@ cc.Class({
 
     initScoreNum () {
         let index = Util.random(0, this._maxInitIndex);
+
+        index = Util.random(0, 1);  // TEST
+
         this._scoreNum = this._scoreDict[index];
 
         //this._scoreNum = 2; // TEST
@@ -120,6 +123,12 @@ cc.Class({
         let index = this._scoreDict.indexOf(this._scoreNum);
 
         this.scoreNum = this._scoreDict[index + 1];
+
+        // 升到顶级后要触发爆炸
+        if (this.isTopScore()) {
+            // 到达2048后爆炸
+            cc.log('itemComp.isTopScore');
+        }
 
         return true;
     }
