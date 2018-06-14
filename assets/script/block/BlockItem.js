@@ -93,9 +93,9 @@ cc.Class({
 
     initScoreNum () {
         let index = Util.random(0, this._maxInitIndex);
-        //this._scoreNum = this._scoreDict[index];
+        this._scoreNum = this._scoreDict[index];
 
-        this._scoreNum = 2; // TEST
+        //this._scoreNum = 2; // TEST
 
         this.updateBlock();
     },

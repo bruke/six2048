@@ -138,7 +138,7 @@ cc.Class({
         let block1 = this.blockList[1];
 
         // 如果两个块数字相同，就不用互换位置了
-        let blockComp0 = block1.getComponent('BlockItem');
+        let blockComp0 = block0.getComponent('BlockItem');
         //let blockComp1 = block1.getComponent('BlockItem');
 
         if (blockComp0.equalWith(block1) ) {

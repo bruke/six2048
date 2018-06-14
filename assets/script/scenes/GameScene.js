@@ -389,7 +389,7 @@ cc.Class({
 
         // 排序
         neighborIndexes.sort(function (a, b) {
-            return a > b;
+            return a - b;
         });
 
         // 过滤无效索引
@@ -510,6 +510,9 @@ cc.Class({
         }
 
         //
+        let validResult = false;
+        let findResult = [];
+
         for (let i = 0; i < checkItemList.length; i++) {
             //
             this.findContinuesList.length = 0;  // 必须清空
@@ -518,12 +521,7 @@ cc.Class({
             //let result = this.getContinuesSameBlockIndex(blockItem);
             this.getContinuesSameBlockIndex(blockItem);
 
-            // TEST
-            //this.findContinuesList.forEach(function (item) {
-            //    item.runAction(cc.blink(1, 3));
-            //});
-            // TEST
-
+            /*
             //if (result.length >= 3) {
             // 特别注意：这里要用this.findContinuesList！！！！
             if (this.findContinuesList.length >= 3) {
@@ -531,7 +529,41 @@ cc.Class({
 
                 blockItem.needUpgrade = true; // 标记升级块
             }
+            */
+
+            // 相邻数量大于两个的都先记录下来
+            if (this.findContinuesList.length >= 2) {
+                findResult.push(this.findContinuesList.slice(0));
+            }
+
+            validResult = validResult || this.findContinuesList.length >= 3;
         }
+
+        // 确定升级合并项
+        if (validResult) {
+            findResult.sort(function (list0, list1) {
+                let blockComp0 = list0[0].getComponent('BlockItem');
+                let blockComp1 = list1[0].getComponent('BlockItem');
+
+                return blockComp0.scoreNum - blockComp1.scoreNum;
+            });
+
+            this.eliminateList = this.eliminateList.concat(findResult);
+
+            // 标记合并升级目标
+            findResult.forEach(function (item) {
+                let itemComp = item.getComponent('BlockItem');
+
+                for (let j = 0; j < checkItemList.length; j++) {
+                    let checkItem = checkItemList[i];
+                    //let checkComp = checkItem.getComponent('BlockItem');
+                    if (itemComp) {
+
+                    }
+                }
+            }, this);
+        }
+
     },
 
     /**
