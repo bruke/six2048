@@ -93,7 +93,6 @@ cc.Class({
 
     initScoreNum () {
         let index = Util.random(0, this._maxInitIndex);
-
         index = Util.random(0, 1);  // TEST
 
         this._scoreNum = this._scoreDict[index];

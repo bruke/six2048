@@ -54,6 +54,11 @@ cc.Class({
             type: cc.Prefab,
         },
 
+        effectLayer : {
+            default: null,
+            type: cc.Node,
+        },
+
         previewNode : {
             default: null,
             type: cc.Node,
@@ -94,9 +99,6 @@ cc.Class({
     //
     onLoad () {
         this.initEnv();
-
-        //监听成功放下事件
-        this.node.on('succDropDownOne', this.checkEliminate, this);
 
         //初始化历史最高分
         this.initHiScore();
@@ -487,7 +489,9 @@ cc.Class({
     /**
      * 消除检测
      */
-    checkEliminate (evt) {
+    checkEliminate (isAuto) {
+        isAuto = !!isAuto;
+
         let blockIndexList = [];
 
         for (let i = 0; i < this.gridItemList.length; i++) {
@@ -504,7 +508,7 @@ cc.Class({
         let checkItemList = this.curDragItemList.slice(0);
 
         // 如果是两个相同数字的块，保留一个就可以了
-        // 以为该两个块必定是相邻的, 一定能被遍历到
+        // 因为该两个块必定是相邻的, 一定能被遍历到
         if ( checkItemList.length === 2 && this.isTwoEqualBlocks(checkItemList[0], checkItemList[1]) ) {
             checkItemList.splice(0, 1);
         }
@@ -536,12 +540,25 @@ cc.Class({
                 findResult.push(this.findContinuesList.slice(0));
             }
 
-            validResult = validResult || this.findContinuesList.length >= 3;
+            //validResult = validResult || this.findContinuesList.length >= 3;
+
+            if (isAuto) {
+                // 自动触发的连锁消除有两个就可以
+                validResult = validResult || this.findContinuesList.length >= 2;
+
+            } else {
+                validResult = validResult || this.findContinuesList.length >= 3;
+            }
         }
 
         // 确定升级合并项
         if (validResult) {
+            //
             findResult.sort(function (list0, list1) {
+                if (list0.length !== list1.length) {
+                    return list1.length - list0.length;
+                }
+
                 let blockComp0 = list0[0].getComponent('BlockItem');
                 let blockComp1 = list1[0].getComponent('BlockItem');
 
@@ -735,8 +752,8 @@ cc.Class({
 
         // 生成下一个
         this.createNextNode();
-
-        this.node.emit('succDropDownOne');
+        
+        this.checkEliminate(false);
 
         let ranC = Util.random(1, 3);
         cc.audioEngine.playEffect(this["fangxiaSound" + ranC]);
@@ -845,15 +862,47 @@ cc.Class({
         }
     },
 
+    removeBlockItemFromGrid (blockItem) {
+        //
+        for (let i = 0; i < this.gridItemList.length; i++) {
+            let gridItem = this.gridItemList[i];
+
+            if (gridItem.gridIndex === blockItem.gridIndex) {
+                gridItem.isHaveBlock = false;
+                break;
+            }
+        }
+    },
+
     doEliminationOnce (blocks) {
         //
         this._isEliminating = true;
         this._eliminateNum = 0;
         this._upgradeTarget = null;  // 本次合并回合的目标升级块
 
+        // 先找到要升级的那一个
+        let activeItem = null;
+        for (let i = 0; i < blocks.length; i++) {
+            let item = blocks[i];
+            if (item.needUpgrade) {
+                activeItem = item;
+                break;
+            }
+        }
+
+        if (!activeItem) {
+            return;
+        }
+
+        let tartPos = activeItem.convertToWorldSpace(activeItem.position);
+        tartPos = this.effectLayer.convertToNodeSpace(tartPos);
+
+
         //
         let action = cc.sequence(
-            cc.spawn(cc.scaleTo(0.5, 2), cc.fadeOut(0.5)),
+            //cc.spawn(cc.scaleTo(0.5, 2), cc.fadeOut(0.5)),'
+            cc.moveTo(0.3, tartPos),
+            //cc.delayTime(0.5),  // 稍微停顿一下, 注意节奏感
             cc.removeSelf(true),
             cc.callFunc(function () {
                 this._eliminateNum--;
@@ -862,13 +911,20 @@ cc.Class({
                     // 目标块升级特效
                     this.upgradeBlock(this._upgradeTarget);
 
+                    this._isEliminating = false;
+
                     // 本次合并升级结束后要检查以本次合成的新块为中心，是否有一个以上连接块 (合并后新块只需两块即可触发下次合并)
                     // 如果和原计划的下一组合并块相邻则直接合并为一个新的大组，一次合并消除
 
-                    this._isEliminating = false;
+                    this.curDragItemList.length = 0;
+                    this.curDragItemList.push(activeItem);
+
+                    this.getContinuesSameBlockIndex(activeItem);
+
+                    this.checkEliminate(true);
                 }
 
-            }, this)
+            }, this),
         );
 
         //
@@ -877,9 +933,18 @@ cc.Class({
 
             if (!item.needUpgrade) {
                 this.gridItemList[item.gridIndex].isHaveBlock = false;
-                //item.removeFromParent(true);
 
-                //这个假方块变大并且渐隐掉
+                let itemPos = item.convertToWorldSpace(item.position);
+                itemPos = this.effectLayer.convertToNodeSpace(itemPos);
+
+                item.removeFromParent(false);
+                item.setPosition(itemPos);
+                this.effectLayer.addChild(item);
+
+                // 从原网格上删除
+                this.removeBlockItemFromGrid(item);
+
+                //
                 item.runAction(action.clone());
 
                 this._eliminateNum++;

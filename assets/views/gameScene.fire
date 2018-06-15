@@ -62,27 +62,27 @@
         "__id__": 14
       },
       {
-        "__id__": 96
-      },
-      {
         "__id__": 97
       },
       {
-        "__id__": 100
+        "__id__": 98
+      },
+      {
+        "__id__": 101
       }
     ],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 104
+        "__id__": 105
       },
       {
-        "__id__": 105
+        "__id__": 106
       }
     ],
     "_prefab": {
-      "__id__": 106
+      "__id__": 107
     },
     "_id": "405107dFxJI9qqhooomfPYh",
     "_opacity": 255,
@@ -580,6 +580,9 @@
       },
       {
         "__id__": 87
+      },
+      {
+        "__id__": 96
       }
     ],
     "_tag": -1,
@@ -3964,6 +3967,54 @@
   },
   {
     "__type__": "cc.Node",
+    "_name": "effectLayer",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 14
+    },
+    "_children": [],
+    "_tag": -1,
+    "_active": true,
+    "_components": [],
+    "_prefab": null,
+    "_id": "80k3v0h7JNg4RbMOxMdqRl",
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_cascadeOpacityEnabled": true,
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 150,
+      "height": 150
+    },
+    "_rotationX": 0,
+    "_rotationY": 0,
+    "_scaleX": 1,
+    "_scaleY": 1,
+    "_position": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 0
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "_localZOrder": 0,
+    "_globalZOrder": 0,
+    "_opacityModifyRGB": false,
+    "groupIndex": 0
+  },
+  {
+    "__type__": "cc.Node",
     "_name": "previewNode",
     "_objFlags": 0,
     "_parent": {
@@ -4019,7 +4070,7 @@
     },
     "_children": [
       {
-        "__id__": 98
+        "__id__": 99
       }
     ],
     "_tag": -1,
@@ -4067,14 +4118,14 @@
     "_name": "richTips",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 97
+      "__id__": 98
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 99
+        "__id__": 100
       }
     ],
     "_prefab": null,
@@ -4119,7 +4170,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 98
+      "__id__": 99
     },
     "_enabled": true,
     "_N$string": "<color=#DF00F1>小贴士：</c><color=#ffffff>在连续合成时，只需要两个及以上的相同数字相连，即可合成更高数字</color>",
@@ -4140,7 +4191,7 @@
     },
     "_children": [
       {
-        "__id__": 101
+        "__id__": 102
       }
     ],
     "_tag": -1,
@@ -4188,17 +4239,17 @@
     "_name": "btnPause",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 100
+      "__id__": 101
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 102
+        "__id__": 103
       },
       {
-        "__id__": 103
+        "__id__": 104
       }
     ],
     "_prefab": null,
@@ -4225,7 +4276,7 @@
     "_rotationX": 0,
     "_rotationY": 0,
     "_scaleX": -1,
-    "_scaleY": 1,
+    "_scaleY": -1,
     "_position": {
       "__type__": "cc.Vec2",
       "x": -16,
@@ -4243,7 +4294,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 101
+      "__id__": 102
     },
     "_enabled": true,
     "_spriteFrame": {
@@ -4269,7 +4320,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 101
+      "__id__": 102
     },
     "_enabled": true,
     "transition": 3,
@@ -4325,7 +4376,7 @@
       "__uuid__": "29158224-f8dd-4661-a796-1ffab537140e"
     },
     "_N$target": {
-      "__id__": 101
+      "__id__": 102
     }
   },
   {
@@ -4367,8 +4418,11 @@
     "tipPrefab": {
       "__uuid__": "c394b75e-a079-49aa-8fde-616758790d9a"
     },
-    "previewNode": {
+    "effectLayer": {
       "__id__": 96
+    },
+    "previewNode": {
+      "__id__": 97
     },
     "anSound": {
       "__uuid__": "8aa9941d-f323-4096-9b54-bcb47c3d5b60"

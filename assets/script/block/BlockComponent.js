@@ -148,8 +148,8 @@ cc.Class({
         let pos0 = block0.position;
         let pos1 = block1.position;
 
-        let action0 = cc.moveTo(0.5, pos1);
-        let action1 = cc.sequence(cc.moveTo(0.5, pos0), cc.callFunc(function () {
+        let action0 = cc.moveTo(0.3, pos1);
+        let action1 = cc.sequence(cc.moveTo(0.3, pos0), cc.callFunc(function () {
             this.isRotating = false;
 
             // 交换
