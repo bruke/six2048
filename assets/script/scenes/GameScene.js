@@ -752,7 +752,6 @@ cc.Class({
 
         // 生成下一个
         this.createNextNode();
-        
         this.checkEliminate(false);
 
         let ranC = Util.random(1, 3);
