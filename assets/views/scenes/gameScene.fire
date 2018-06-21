@@ -75,14 +75,14 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 105
+        "__id__": 106
       },
       {
-        "__id__": 106
+        "__id__": 107
       }
     ],
     "_prefab": {
-      "__id__": 107
+      "__id__": 108
     },
     "_id": "405107dFxJI9qqhooomfPYh",
     "_opacity": 255,
@@ -4340,7 +4340,11 @@
     },
     "duration": 0.1,
     "zoomScale": 1.2,
-    "clickEvents": [],
+    "clickEvents": [
+      {
+        "__id__": 105
+      }
+    ],
     "_N$interactable": true,
     "_N$enableAutoGrayEffect": false,
     "_N$normalColor": {
@@ -4378,6 +4382,15 @@
     "_N$target": {
       "__id__": 102
     }
+  },
+  {
+    "__type__": "cc.ClickEvent",
+    "target": {
+      "__id__": 2
+    },
+    "component": "GameScene",
+    "handler": "onBtnPause",
+    "customEventData": ""
   },
   {
     "__type__": "cc.Canvas",
@@ -4423,6 +4436,9 @@
     },
     "previewNode": {
       "__id__": 97
+    },
+    "pausePrefab": {
+      "__uuid__": "f55e53da-8a24-4547-a3c3-610a551619b9"
     },
     "anSound": {
       "__uuid__": "8aa9941d-f323-4096-9b54-bcb47c3d5b60"

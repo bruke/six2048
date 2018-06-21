@@ -64,6 +64,11 @@ cc.Class({
             type: cc.Node,
         },
 
+        pausePrefab: {
+            default: null,
+            type: cc.Prefab
+        },
+
         //
         anSound: {
             default: null,
@@ -970,7 +975,23 @@ cc.Class({
 
     update () {
         this.updateElimination();
-    }
+    },
+
+
+    // 显示"我的道具"界面
+    showPauseLayer () {
+        if (!this.pauseLayer) {
+            let pauseLayer = cc.instantiate(this.pausePrefab);
+            this.node.addChild(pauseLayer);
+
+            this.pauseLayer = pauseLayer;
+        }
+        this.pauseLayer.active = true;
+    },
+
+    onBtnPause (evt) {
+        this.showPauseLayer();
+    },
 
 });
 

@@ -1,13 +1,8 @@
 
-
 cc.Class({
     extends: cc.Component,
 
     properties: {
-        btnSound: {
-            default: null,
-            url: cc.AudioClip
-        },
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -15,16 +10,12 @@ cc.Class({
     // onLoad () {},
 
     start () {
+
     },
 
     // update (dt) {},
 
-    onBtnGameStart (evt) {
-        let button = evt.target;
-        cc.audioEngine.playEffect(this.btnSound)
-
+    onBtnStart (evt) {
         cc.director.loadScene("gameScene");
     },
-
 });
-
