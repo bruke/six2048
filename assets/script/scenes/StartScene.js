@@ -26,5 +26,21 @@ cc.Class({
         cc.director.loadScene("gameScene");
     },
 
+    onBtnLife (evt) {
+
+    },
+
+    onBtnRank (evt) {
+
+    },
+
+    onBtnSound (evt) {
+
+    },
+
+    onBtnMoreGame (evt) {
+
+    }
+
 });
 

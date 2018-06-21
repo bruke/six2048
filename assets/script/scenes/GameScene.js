@@ -218,7 +218,7 @@ cc.Class({
 
     // 读取历史最高分
     initHiScore () {
-        let node = cc.find('Canvas/scoreNode/scoreLabel');
+        let node = cc.find('Canvas/scoreNode/hiScoreLabel');
         let label = node.getComponent(cc.Label);
 
         label.string = cc.sys.localStorage.getItem("score") || 0;
